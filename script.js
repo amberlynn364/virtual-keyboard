@@ -5,6 +5,7 @@ const cssClasses = {
   KEYBOARD_ROW: 'keyboard__row',
   KEYBOARD_KEY: 'keyboard__key',
   KEYBOARD_SPECIAL_KEY: 'keyboard__special-key',
+  KEYBOARD_SHIFT_KEY: 'keyboard__shift-key',
   KEYBOARD_KEY_LARGE: 'keyboard__key_large',
   KEYBOARD_KEY_EXTRA_LARGE: 'keyboard__key_extra-large',
 };
@@ -38,10 +39,9 @@ class Keyboard {
     this.elements.keysWrapper = document.createElement('div');
 
     this.elements.textarea.classList.add(cssClasses.TEXT_AREA);
-    // this.elements.textarea.setAttribute('placeholder', 'Click here!');
     this.elements.keyboard.classList.add(cssClasses.KEYBOARD);
     this.elements.keysWrapper.classList.add(cssClasses.KEYBOARD_WRAPPER);
-    this.elements.keysWrapper.appendChild(this.createKeys(this.keyboardKeys()));
+    this.elements.keysWrapper.appendChild((this.createKeys(this.keyboardKeys())));
     this.elements.keyboard.appendChild(this.elements.keysWrapper);
     document.body.appendChild(this.elements.textarea);
     document.body.appendChild(this.elements.keyboard);
@@ -51,31 +51,72 @@ class Keyboard {
     //     this.elements.textarea.value = currentValue;
     //   });
     // });
-
+    
     this.elements.textarea.addEventListener('focus', () => {
       this.open(this.elements.textarea.value, (currentValue) => {
         this.elements.textarea.value = currentValue;
         // this.properties.textAreaActive = !this.properties.textAreaActive;
       });
     });
-    this.elements.textarea.addEventListener('keydown', (e) => {
-      if (e.key === 'Alt') {
-        this.elements.textarea.addEventListener('keydown', (event) => {
-          if (event.key === 'Control') {
-            console.log(this.properties.language);
-            if (this.properties.language === 'eu') {
-              this.properties.language = 'ru';
-              this.elements.keysWrapper.innerHTML = '';
-              this.elements.keysWrapper.appendChild(this.createKeys(this.keyboardKeys()));
-            } else if (this.properties.language === 'ru') {
-              this.properties.language = 'eu';
-              this.elements.keysWrapper.innerHTML = '';
-              this.elements.keysWrapper.appendChild(this.createKeys(this.keyboardKeys()));
-            }
-          }
-        });
-      }
-    });
+    // document.onkeydown = (event) => {
+    //   if (event.key === 'Alt') {
+    //     document.onkeydown = (e) => {
+    //       if (e.key === 'Control') {
+    //         console.log('work');
+    //         if (this.properties.language === 'eu') {
+    //           this.properties.language = 'ru';
+    //           // this.elements.keysWrapper.innerHTML = '';
+    //           // this.elements.keysWrapper.appendChild(this.createKeys());
+    //         } else if (this.properties.language === 'ru') {
+    //           this.properties.language = 'eu';
+    //           // this.elements.keysWrapper.innerHTML = '';
+    //           // this.elements.keysWrapper.appendChild(this.createKeys());
+    //         }
+    //         console.log(this.properties.language);
+    //       }
+    //     };
+    //   }
+    // };
+  }
+
+  // document.onkeydown = (event) => {
+  //   if (event.key === 'Alt') {
+  //       document.onkeydown = (e) => {
+  //         if (e.key === 'Control') {
+  //           console.log('work');
+  //           if (this.properties.language === 'eu') {
+  //             this.properties.language = 'ru';
+  //             // this.elements.keysWrapper.innerHTML = '';
+  //             // this.elements.keysWrapper.appendChild(this.createKeys());
+  //           } else if (this.properties.language === 'ru') {
+  //             this.properties.language = 'eu';
+  //             // this.elements.keysWrapper.innerHTML = '';
+  //             // this.elements.keysWrapper.appendChild(this.createKeys());
+  //           }
+  //           console.log(this.properties.language);
+  //         }
+  //       };
+  //     }
+  //   };
+
+  jekaFunction() {
+    const keyArraySHIFT = [
+      ['~', '!', '@', '#', '$', '%', '^', '7', '8', '9', '0', '-', '=', 'Backspace'],
+      ['Tab', 'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', '[', ']', '\\', 'Del'],
+      ['Caps Lock', 'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', ';', '\'', 'Enter'],
+      ['LShift', 'z', 'x', 'c', 'v', 'b', 'n', 'm', ',', '.', '/', 'up', 'RShift'],
+      ['LCtrl', 'Win', 'LAlt', 'Space', 'RAlt', 'left', 'bottom', 'right', 'RCtrl'],
+    ];
+
+    const keyArrayEuS = [
+      ['`', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', 'Backspace'],
+      ['Tab', 'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', '[', ']', '\\', 'Del'],
+      ['Caps Lock', 'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', ';', '\'', 'Enter'],
+      ['LShift', 'z', 'x', 'c', 'v', 'b', 'n', 'm', ',', '.', '/', 'up', 'RShift'],
+      ['LCtrl', 'Win', 'LAlt', 'Space', 'RAlt', 'left', 'bottom', 'right', 'RCtrl'],
+    ];
+
+
   }
 
   keyboardKeys() {
@@ -101,6 +142,9 @@ class Keyboard {
   }
 
   createKeys(array) {
+    function createArrowButtonIcon(iconName) {
+      return `<span class="material-symbols-outlined">${iconName}</span>`;
+    }
     const fragment = document.createDocumentFragment();
     // const keyArray = [
     //   ['`', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', 'Backspace'],
@@ -109,10 +153,6 @@ class Keyboard {
     //   ['LShift', 'z', 'x', 'c', 'v', 'b', 'n', 'm', ',', '.', '/', 'up', 'RShift'],
     //   ['LCtrl', 'Win', 'LAlt', 'Space', 'RAlt', 'left', 'bottom', 'right', 'RCtrl'],
     // ];
-
-    function createArrowButtonIcon(iconName) {
-      return `<span class="material-symbols-outlined">${iconName}</span>`;
-    }
 
     for (let i = 0; i < array.length; i += 1) {
       this.elements.keysRow = document.createElement('div');
@@ -125,7 +165,7 @@ class Keyboard {
             keyItem.textContent = key;
             // Событие клавиатуры
             this.elements.textarea.addEventListener('keydown', (e) => {
-              if (e.code === 'Backspace') {
+              if (e.key === 'Backspace') {
                 keyItem.classList.add('keyboard__key_active');
                 e.preventDefault();
                 const start = this.elements.textarea.selectionStart;
@@ -142,7 +182,7 @@ class Keyboard {
                   this.elements.textarea.selectionEnd = start - 1;
                 }
               }
-            });
+            }, false);
             this.elements.textarea.addEventListener('keyup', (e) => {
               if (e.code === 'Backspace') {
                 keyItem.classList.remove('keyboard__key_active');
@@ -555,6 +595,951 @@ class Keyboard {
             });
             // Событие мышки
             break;
+          case '`':
+            keyItem.classList.add(cssClasses.KEYBOARD_SHIFT_KEY);
+            keyItem.textContent = key;
+            // Событие клавиатуры
+            this.elements.textarea.addEventListener('keydown', (e) => {
+              const start = this.elements.textarea.selectionStart;
+              if (e.key === key || e.key === '~') {
+                if (this.properties.shift) {
+                  keyItem.classList.add('keyboard__key_active');
+                  e.preventDefault();
+                  this.properties.value = `${this.properties.value.substring(0, start)}~${this.properties.value.substring(start)}`;
+                  this.triggerEvent('oninput');
+                  this.elements.textarea.focus();
+                  this.elements.textarea.selectionEnd = start + 1;
+                } else {
+                  keyItem.classList.add('keyboard__key_active');
+                  e.preventDefault();
+                  this.properties.value = `${this.properties.value.substring(0, start)}${key}${this.properties.value.substring(start)}`;
+                  this.triggerEvent('oninput');
+                  this.elements.textarea.focus();
+                  this.elements.textarea.selectionEnd = start + 1;
+                }
+              }
+            });
+            this.elements.textarea.addEventListener('keyup', (e) => {
+              if (e.key === key || e.key === '~') {
+                keyItem.classList.remove('keyboard__key_active');
+              }
+            });
+            // Событие мышки
+            keyItem.addEventListener('click', () => {
+              const start = this.elements.textarea.selectionStart;
+              if (this.properties.shift) {
+                this.properties.value = `${this.properties.value.substring(0, start)}~${this.properties.value.substring(start)}`;
+                this.triggerEvent('oninput');
+                this.elements.textarea.focus();
+                this.elements.textarea.selectionEnd = start + 1;
+              } else {
+                this.properties.value = `${this.properties.value.substring(0, start)}${key}${this.properties.value.substring(start)}`;
+                this.triggerEvent('oninput');
+                this.elements.textarea.focus();
+                this.elements.textarea.selectionEnd = start + 1;
+              }
+            });
+            break;
+          case '1':
+            keyItem.classList.add(cssClasses.KEYBOARD_SHIFT_KEY);
+            keyItem.textContent = key;
+            // Событие клавиатуры
+            this.elements.textarea.addEventListener('keydown', (e) => {
+              const start = this.elements.textarea.selectionStart;
+              if (e.key === key || e.key === '!') {
+                if (this.properties.shift) {
+                  keyItem.classList.add('keyboard__key_active');
+                  e.preventDefault();
+                  this.properties.value = `${this.properties.value.substring(0, start)}!${this.properties.value.substring(start)}`;
+                  this.triggerEvent('oninput');
+                  this.elements.textarea.focus();
+                  this.elements.textarea.selectionEnd = start + 1;
+                } else {
+                  keyItem.classList.add('keyboard__key_active');
+                  e.preventDefault();
+                  this.properties.value = `${this.properties.value.substring(0, start)}${key}${this.properties.value.substring(start)}`;
+                  this.triggerEvent('oninput');
+                  this.elements.textarea.focus();
+                  this.elements.textarea.selectionEnd = start + 1;
+                }
+              }
+            });
+            this.elements.textarea.addEventListener('keyup', (e) => {
+              if (e.key === key || e.key === '!') {
+                keyItem.classList.remove('keyboard__key_active');
+              }
+            });
+            // Событие мышки
+            keyItem.addEventListener('click', () => {
+              const start = this.elements.textarea.selectionStart;
+              if (this.properties.shift) {
+                this.properties.value = `${this.properties.value.substring(0, start)}!${this.properties.value.substring(start)}`;
+                this.triggerEvent('oninput');
+                this.elements.textarea.focus();
+                this.elements.textarea.selectionEnd = start + 1;
+              } else {
+                this.properties.value = `${this.properties.value.substring(0, start)}${key}${this.properties.value.substring(start)}`;
+                this.triggerEvent('oninput');
+                this.elements.textarea.focus();
+                this.elements.textarea.selectionEnd = start + 1;
+              }
+            });
+            break;
+          case '2':
+            keyItem.classList.add(cssClasses.KEYBOARD_SHIFT_KEY);
+            keyItem.textContent = key;
+            // Событие клавиатуры
+            this.elements.textarea.addEventListener('keydown', (e) => {
+              const start = this.elements.textarea.selectionStart;
+              if (e.key === key || e.key === '@') {
+                if (this.properties.shift) {
+                  keyItem.classList.add('keyboard__key_active');
+                  e.preventDefault();
+                  this.properties.value = `${this.properties.value.substring(0, start)}@${this.properties.value.substring(start)}`;
+                  this.triggerEvent('oninput');
+                  this.elements.textarea.focus();
+                  this.elements.textarea.selectionEnd = start + 1;
+                } else {
+                  keyItem.classList.add('keyboard__key_active');
+                  e.preventDefault();
+                  this.properties.value = `${this.properties.value.substring(0, start)}${key}${this.properties.value.substring(start)}`;
+                  this.triggerEvent('oninput');
+                  this.elements.textarea.focus();
+                  this.elements.textarea.selectionEnd = start + 1;
+                }
+              }
+            });
+            this.elements.textarea.addEventListener('keyup', (e) => {
+              if (e.key === key || e.key === '@') {
+                keyItem.classList.remove('keyboard__key_active');
+              }
+            });
+            // Событие мышки
+            keyItem.addEventListener('click', () => {
+              const start = this.elements.textarea.selectionStart;
+              if (this.properties.shift) {
+                this.properties.value = `${this.properties.value.substring(0, start)}@${this.properties.value.substring(start)}`;
+                this.triggerEvent('oninput');
+                this.elements.textarea.focus();
+                this.elements.textarea.selectionEnd = start + 1;
+              } else {
+                this.properties.value = `${this.properties.value.substring(0, start)}${key}${this.properties.value.substring(start)}`;
+                this.triggerEvent('oninput');
+                this.elements.textarea.focus();
+                this.elements.textarea.selectionEnd = start + 1;
+              }
+            });
+            break;
+          case '3':
+            keyItem.classList.add(cssClasses.KEYBOARD_SHIFT_KEY);
+            keyItem.textContent = key;
+            // Событие клавиатуры
+            this.elements.textarea.addEventListener('keydown', (e) => {
+              const start = this.elements.textarea.selectionStart;
+              if (e.key === key || e.key === '#') {
+                if (this.properties.shift) {
+                  keyItem.classList.add('keyboard__key_active');
+                  e.preventDefault();
+                  this.properties.value = `${this.properties.value.substring(0, start)}#${this.properties.value.substring(start)}`;
+                  this.triggerEvent('oninput');
+                  this.elements.textarea.focus();
+                  this.elements.textarea.selectionEnd = start + 1;
+                } else {
+                  keyItem.classList.add('keyboard__key_active');
+                  e.preventDefault();
+                  this.properties.value = `${this.properties.value.substring(0, start)}${key}${this.properties.value.substring(start)}`;
+                  this.triggerEvent('oninput');
+                  this.elements.textarea.focus();
+                  this.elements.textarea.selectionEnd = start + 1;
+                }
+              }
+            });
+            this.elements.textarea.addEventListener('keyup', (e) => {
+              if (e.key === key || e.key === '#') {
+                keyItem.classList.remove('keyboard__key_active');
+              }
+            });
+            // Событие мышки
+            keyItem.addEventListener('click', () => {
+              const start = this.elements.textarea.selectionStart;
+              if (this.properties.shift) {
+                this.properties.value = `${this.properties.value.substring(0, start)}#${this.properties.value.substring(start)}`;
+                this.triggerEvent('oninput');
+                this.elements.textarea.focus();
+                this.elements.textarea.selectionEnd = start + 1;
+              } else {
+                this.properties.value = `${this.properties.value.substring(0, start)}${key}${this.properties.value.substring(start)}`;
+                this.triggerEvent('oninput');
+                this.elements.textarea.focus();
+                this.elements.textarea.selectionEnd = start + 1;
+              }
+            });
+            break;
+          case '4':
+            keyItem.classList.add(cssClasses.KEYBOARD_SHIFT_KEY);
+            keyItem.textContent = key;
+            // Событие клавиатуры
+            this.elements.textarea.addEventListener('keydown', (e) => {
+              const start = this.elements.textarea.selectionStart;
+              if (e.key === key || e.key === '$') {
+                if (this.properties.shift) {
+                  keyItem.classList.add('keyboard__key_active');
+                  e.preventDefault();
+                  this.properties.value = `${this.properties.value.substring(0, start)}$${this.properties.value.substring(start)}`;
+                  this.triggerEvent('oninput');
+                  this.elements.textarea.focus();
+                  this.elements.textarea.selectionEnd = start + 1;
+                } else {
+                  keyItem.classList.add('keyboard__key_active');
+                  e.preventDefault();
+                  this.properties.value = `${this.properties.value.substring(0, start)}${key}${this.properties.value.substring(start)}`;
+                  this.triggerEvent('oninput');
+                  this.elements.textarea.focus();
+                  this.elements.textarea.selectionEnd = start + 1;
+                }
+              }
+            });
+            this.elements.textarea.addEventListener('keyup', (e) => {
+              if (e.key === key || e.key === '$') {
+                keyItem.classList.remove('keyboard__key_active');
+              }
+            });
+            // Событие мышки
+            keyItem.addEventListener('click', () => {
+              const start = this.elements.textarea.selectionStart;
+              if (this.properties.shift) {
+                this.properties.value = `${this.properties.value.substring(0, start)}$${this.properties.value.substring(start)}`;
+                this.triggerEvent('oninput');
+                this.elements.textarea.focus();
+                this.elements.textarea.selectionEnd = start + 1;
+              } else {
+                this.properties.value = `${this.properties.value.substring(0, start)}${key}${this.properties.value.substring(start)}`;
+                this.triggerEvent('oninput');
+                this.elements.textarea.focus();
+                this.elements.textarea.selectionEnd = start + 1;
+              }
+            });
+            break;
+          case '5':
+            keyItem.classList.add(cssClasses.KEYBOARD_SHIFT_KEY);
+            keyItem.textContent = key;
+            // Событие клавиатуры
+            this.elements.textarea.addEventListener('keydown', (e) => {
+              const start = this.elements.textarea.selectionStart;
+              if (e.key === key || e.key === '%') {
+                if (this.properties.shift) {
+                  keyItem.classList.add('keyboard__key_active');
+                  e.preventDefault();
+                  this.properties.value = `${this.properties.value.substring(0, start)}%${this.properties.value.substring(start)}`;
+                  this.triggerEvent('oninput');
+                  this.elements.textarea.focus();
+                  this.elements.textarea.selectionEnd = start + 1;
+                } else {
+                  keyItem.classList.add('keyboard__key_active');
+                  e.preventDefault();
+                  this.properties.value = `${this.properties.value.substring(0, start)}${key}${this.properties.value.substring(start)}`;
+                  this.triggerEvent('oninput');
+                  this.elements.textarea.focus();
+                  this.elements.textarea.selectionEnd = start + 1;
+                }
+              }
+            });
+            this.elements.textarea.addEventListener('keyup', (e) => {
+              if (e.key === key || e.key === '%') {
+                keyItem.classList.remove('keyboard__key_active');
+              }
+            });
+            // Событие мышки
+            keyItem.addEventListener('click', () => {
+              const start = this.elements.textarea.selectionStart;
+              if (this.properties.shift) {
+                this.properties.value = `${this.properties.value.substring(0, start)}%${this.properties.value.substring(start)}`;
+                this.triggerEvent('oninput');
+                this.elements.textarea.focus();
+                this.elements.textarea.selectionEnd = start + 1;
+              } else {
+                this.properties.value = `${this.properties.value.substring(0, start)}${key}${this.properties.value.substring(start)}`;
+                this.triggerEvent('oninput');
+                this.elements.textarea.focus();
+                this.elements.textarea.selectionEnd = start + 1;
+              }
+            });
+            break;
+          case '6':
+            keyItem.classList.add(cssClasses.KEYBOARD_SHIFT_KEY);
+            keyItem.textContent = key;
+            // Событие клавиатуры
+            this.elements.textarea.addEventListener('keydown', (e) => {
+              const start = this.elements.textarea.selectionStart;
+              if (e.key === key || e.key === '^') {
+                if (this.properties.shift) {
+                  keyItem.classList.add('keyboard__key_active');
+                  e.preventDefault();
+                  this.properties.value = `${this.properties.value.substring(0, start)}^${this.properties.value.substring(start)}`;
+                  this.triggerEvent('oninput');
+                  this.elements.textarea.focus();
+                  this.elements.textarea.selectionEnd = start + 1;
+                } else {
+                  keyItem.classList.add('keyboard__key_active');
+                  e.preventDefault();
+                  this.properties.value = `${this.properties.value.substring(0, start)}${key}${this.properties.value.substring(start)}`;
+                  this.triggerEvent('oninput');
+                  this.elements.textarea.focus();
+                  this.elements.textarea.selectionEnd = start + 1;
+                }
+              }
+            });
+            this.elements.textarea.addEventListener('keyup', (e) => {
+              if (e.key === key || e.key === '^') {
+                keyItem.classList.remove('keyboard__key_active');
+              }
+            });
+            // Событие мышки
+            keyItem.addEventListener('click', () => {
+              const start = this.elements.textarea.selectionStart;
+              if (this.properties.shift) {
+                this.properties.value = `${this.properties.value.substring(0, start)}^${this.properties.value.substring(start)}`;
+                this.triggerEvent('oninput');
+                this.elements.textarea.focus();
+                this.elements.textarea.selectionEnd = start + 1;
+              } else {
+                this.properties.value = `${this.properties.value.substring(0, start)}${key}${this.properties.value.substring(start)}`;
+                this.triggerEvent('oninput');
+                this.elements.textarea.focus();
+                this.elements.textarea.selectionEnd = start + 1;
+              }
+            });
+            break;
+          case '7':
+            keyItem.classList.add(cssClasses.KEYBOARD_SHIFT_KEY);
+            keyItem.textContent = key;
+            // Событие клавиатуры
+            this.elements.textarea.addEventListener('keydown', (e) => {
+              const start = this.elements.textarea.selectionStart;
+              if (e.key === key || e.key === '&') {
+                if (this.properties.shift) {
+                  keyItem.classList.add('keyboard__key_active');
+                  e.preventDefault();
+                  this.properties.value = `${this.properties.value.substring(0, start)}&${this.properties.value.substring(start)}`;
+                  this.triggerEvent('oninput');
+                  this.elements.textarea.focus();
+                  this.elements.textarea.selectionEnd = start + 1;
+                } else {
+                  keyItem.classList.add('keyboard__key_active');
+                  e.preventDefault();
+                  this.properties.value = `${this.properties.value.substring(0, start)}${key}${this.properties.value.substring(start)}`;
+                  this.triggerEvent('oninput');
+                  this.elements.textarea.focus();
+                  this.elements.textarea.selectionEnd = start + 1;
+                }
+              }
+            });
+            this.elements.textarea.addEventListener('keyup', (e) => {
+              if (e.key === key || e.key === '&') {
+                keyItem.classList.remove('keyboard__key_active');
+              }
+            });
+            // Событие мышки
+            keyItem.addEventListener('click', () => {
+              const start = this.elements.textarea.selectionStart;
+              if (this.properties.shift) {
+                this.properties.value = `${this.properties.value.substring(0, start)}&${this.properties.value.substring(start)}`;
+                this.triggerEvent('oninput');
+                this.elements.textarea.focus();
+                this.elements.textarea.selectionEnd = start + 1;
+              } else {
+                this.properties.value = `${this.properties.value.substring(0, start)}${key}${this.properties.value.substring(start)}`;
+                this.triggerEvent('oninput');
+                this.elements.textarea.focus();
+                this.elements.textarea.selectionEnd = start + 1;
+              }
+            });
+            break;
+          case '8':
+            keyItem.classList.add(cssClasses.KEYBOARD_SHIFT_KEY);
+            keyItem.textContent = key;
+            // Событие клавиатуры
+            this.elements.textarea.addEventListener('keydown', (e) => {
+              const start = this.elements.textarea.selectionStart;
+              if (e.key === key || e.key === '*') {
+                if (this.properties.shift) {
+                  keyItem.classList.add('keyboard__key_active');
+                  e.preventDefault();
+                  this.properties.value = `${this.properties.value.substring(0, start)}*${this.properties.value.substring(start)}`;
+                  this.triggerEvent('oninput');
+                  this.elements.textarea.focus();
+                  this.elements.textarea.selectionEnd = start + 1;
+                } else {
+                  keyItem.classList.add('keyboard__key_active');
+                  e.preventDefault();
+                  this.properties.value = `${this.properties.value.substring(0, start)}${key}${this.properties.value.substring(start)}`;
+                  this.triggerEvent('oninput');
+                  this.elements.textarea.focus();
+                  this.elements.textarea.selectionEnd = start + 1;
+                }
+              }
+            });
+            this.elements.textarea.addEventListener('keyup', (e) => {
+              if (e.key === key || e.key === '*') {
+                keyItem.classList.remove('keyboard__key_active');
+              }
+            });
+            // Событие мышки
+            keyItem.addEventListener('click', () => {
+              const start = this.elements.textarea.selectionStart;
+              if (this.properties.shift) {
+                this.properties.value = `${this.properties.value.substring(0, start)}*${this.properties.value.substring(start)}`;
+                this.triggerEvent('oninput');
+                this.elements.textarea.focus();
+                this.elements.textarea.selectionEnd = start + 1;
+              } else {
+                this.properties.value = `${this.properties.value.substring(0, start)}${key}${this.properties.value.substring(start)}`;
+                this.triggerEvent('oninput');
+                this.elements.textarea.focus();
+                this.elements.textarea.selectionEnd = start + 1;
+              }
+            });
+            break;
+          case '9':
+            keyItem.classList.add(cssClasses.KEYBOARD_SHIFT_KEY);
+            keyItem.textContent = key;
+            // Событие клавиатуры
+            this.elements.textarea.addEventListener('keydown', (e) => {
+              const start = this.elements.textarea.selectionStart;
+              if (e.key === key || e.key === '(') {
+                if (this.properties.shift) {
+                  keyItem.classList.add('keyboard__key_active');
+                  e.preventDefault();
+                  this.properties.value = `${this.properties.value.substring(0, start)}(${this.properties.value.substring(start)}`;
+                  this.triggerEvent('oninput');
+                  this.elements.textarea.focus();
+                  this.elements.textarea.selectionEnd = start + 1;
+                } else {
+                  keyItem.classList.add('keyboard__key_active');
+                  e.preventDefault();
+                  this.properties.value = `${this.properties.value.substring(0, start)}${key}${this.properties.value.substring(start)}`;
+                  this.triggerEvent('oninput');
+                  this.elements.textarea.focus();
+                  this.elements.textarea.selectionEnd = start + 1;
+                }
+              }
+            });
+            this.elements.textarea.addEventListener('keyup', (e) => {
+              if (e.key === key || e.key === '(') {
+                keyItem.classList.remove('keyboard__key_active');
+              }
+            });
+            // Событие мышки
+            keyItem.addEventListener('click', () => {
+              const start = this.elements.textarea.selectionStart;
+              if (this.properties.shift) {
+                this.properties.value = `${this.properties.value.substring(0, start)}(${this.properties.value.substring(start)}`;
+                this.triggerEvent('oninput');
+                this.elements.textarea.focus();
+                this.elements.textarea.selectionEnd = start + 1;
+              } else {
+                this.properties.value = `${this.properties.value.substring(0, start)}${key}${this.properties.value.substring(start)}`;
+                this.triggerEvent('oninput');
+                this.elements.textarea.focus();
+                this.elements.textarea.selectionEnd = start + 1;
+              }
+            });
+            break;
+          case '0':
+            keyItem.classList.add(cssClasses.KEYBOARD_SHIFT_KEY);
+            keyItem.textContent = key;
+            // Событие клавиатуры
+            this.elements.textarea.addEventListener('keydown', (e) => {
+              const start = this.elements.textarea.selectionStart;
+              if (e.key === key || e.key === ')') {
+                if (this.properties.shift) {
+                  keyItem.classList.add('keyboard__key_active');
+                  e.preventDefault();
+                  this.properties.value = `${this.properties.value.substring(0, start)})${this.properties.value.substring(start)}`;
+                  this.triggerEvent('oninput');
+                  this.elements.textarea.focus();
+                  this.elements.textarea.selectionEnd = start + 1;
+                } else {
+                  keyItem.classList.add('keyboard__key_active');
+                  e.preventDefault();
+                  this.properties.value = `${this.properties.value.substring(0, start)}${key}${this.properties.value.substring(start)}`;
+                  this.triggerEvent('oninput');
+                  this.elements.textarea.focus();
+                  this.elements.textarea.selectionEnd = start + 1;
+                }
+              }
+            });
+            this.elements.textarea.addEventListener('keyup', (e) => {
+              if (e.key === key || e.key === ')') {
+                keyItem.classList.remove('keyboard__key_active');
+              }
+            });
+            // Событие мышки
+            keyItem.addEventListener('click', () => {
+              const start = this.elements.textarea.selectionStart;
+              if (this.properties.shift) {
+                this.properties.value = `${this.properties.value.substring(0, start)})${this.properties.value.substring(start)}`;
+                this.triggerEvent('oninput');
+                this.elements.textarea.focus();
+                this.elements.textarea.selectionEnd = start + 1;
+              } else {
+                this.properties.value = `${this.properties.value.substring(0, start)}${key}${this.properties.value.substring(start)}`;
+                this.triggerEvent('oninput');
+                this.elements.textarea.focus();
+                this.elements.textarea.selectionEnd = start + 1;
+              }
+            });
+            break;
+          case '-':
+            keyItem.classList.add(cssClasses.KEYBOARD_SHIFT_KEY);
+            keyItem.textContent = key;
+            // Событие клавиатуры
+            this.elements.textarea.addEventListener('keydown', (e) => {
+              const start = this.elements.textarea.selectionStart;
+              if (e.key === key || e.key === '_') {
+                if (this.properties.shift) {
+                  keyItem.classList.add('keyboard__key_active');
+                  e.preventDefault();
+                  this.properties.value = `${this.properties.value.substring(0, start)}_${this.properties.value.substring(start)}`;
+                  this.triggerEvent('oninput');
+                  this.elements.textarea.focus();
+                  this.elements.textarea.selectionEnd = start + 1;
+                } else {
+                  keyItem.classList.add('keyboard__key_active');
+                  e.preventDefault();
+                  this.properties.value = `${this.properties.value.substring(0, start)}${key}${this.properties.value.substring(start)}`;
+                  this.triggerEvent('oninput');
+                  this.elements.textarea.focus();
+                  this.elements.textarea.selectionEnd = start + 1;
+                }
+              }
+            });
+            this.elements.textarea.addEventListener('keyup', (e) => {
+              if (e.key === key || e.key === '_') {
+                keyItem.classList.remove('keyboard__key_active');
+              }
+            });
+            // Событие мышки
+            keyItem.addEventListener('click', () => {
+              const start = this.elements.textarea.selectionStart;
+              if (this.properties.shift) {
+                this.properties.value = `${this.properties.value.substring(0, start)}_${this.properties.value.substring(start)}`;
+                this.triggerEvent('oninput');
+                this.elements.textarea.focus();
+                this.elements.textarea.selectionEnd = start + 1;
+              } else {
+                this.properties.value = `${this.properties.value.substring(0, start)}${key}${this.properties.value.substring(start)}`;
+                this.triggerEvent('oninput');
+                this.elements.textarea.focus();
+                this.elements.textarea.selectionEnd = start + 1;
+              }
+            });
+            break;
+          case '=':
+            keyItem.classList.add(cssClasses.KEYBOARD_SHIFT_KEY);
+            keyItem.textContent = key;
+            // Событие клавиатуры
+            this.elements.textarea.addEventListener('keydown', (e) => {
+              const start = this.elements.textarea.selectionStart;
+              if (e.key === key || e.key === '+') {
+                if (this.properties.shift) {
+                  keyItem.classList.add('keyboard__key_active');
+                  e.preventDefault();
+                  this.properties.value = `${this.properties.value.substring(0, start)}+${this.properties.value.substring(start)}`;
+                  this.triggerEvent('oninput');
+                  this.elements.textarea.focus();
+                  this.elements.textarea.selectionEnd = start + 1;
+                } else {
+                  keyItem.classList.add('keyboard__key_active');
+                  e.preventDefault();
+                  this.properties.value = `${this.properties.value.substring(0, start)}${key}${this.properties.value.substring(start)}`;
+                  this.triggerEvent('oninput');
+                  this.elements.textarea.focus();
+                  this.elements.textarea.selectionEnd = start + 1;
+                }
+              }
+            });
+            this.elements.textarea.addEventListener('keyup', (e) => {
+              if (e.key === key || e.key === '+') {
+                keyItem.classList.remove('keyboard__key_active');
+              }
+            });
+            // Событие мышки
+            keyItem.addEventListener('click', () => {
+              const start = this.elements.textarea.selectionStart;
+              if (this.properties.shift) {
+                this.properties.value = `${this.properties.value.substring(0, start)}+${this.properties.value.substring(start)}`;
+                this.triggerEvent('oninput');
+                this.elements.textarea.focus();
+                this.elements.textarea.selectionEnd = start + 1;
+              } else {
+                this.properties.value = `${this.properties.value.substring(0, start)}${key}${this.properties.value.substring(start)}`;
+                this.triggerEvent('oninput');
+                this.elements.textarea.focus();
+                this.elements.textarea.selectionEnd = start + 1;
+              }
+            });
+            break;
+          case '[':
+            keyItem.classList.add(cssClasses.KEYBOARD_SHIFT_KEY);
+            keyItem.textContent = key;
+            // Событие клавиатуры
+            this.elements.textarea.addEventListener('keydown', (e) => {
+              const start = this.elements.textarea.selectionStart;
+              if (e.key === key || e.key === '{') {
+                if (this.properties.shift) {
+                  keyItem.classList.add('keyboard__key_active');
+                  e.preventDefault();
+                  this.properties.value = `${this.properties.value.substring(0, start)}{${this.properties.value.substring(start)}`;
+                  this.triggerEvent('oninput');
+                  this.elements.textarea.focus();
+                  this.elements.textarea.selectionEnd = start + 1;
+                } else {
+                  keyItem.classList.add('keyboard__key_active');
+                  e.preventDefault();
+                  this.properties.value = `${this.properties.value.substring(0, start)}${key}${this.properties.value.substring(start)}`;
+                  this.triggerEvent('oninput');
+                  this.elements.textarea.focus();
+                  this.elements.textarea.selectionEnd = start + 1;
+                }
+              }
+            });
+            this.elements.textarea.addEventListener('keyup', (e) => {
+              if (e.key === key || e.key === '{') {
+                keyItem.classList.remove('keyboard__key_active');
+              }
+            });
+            // Событие мышки
+            keyItem.addEventListener('click', () => {
+              const start = this.elements.textarea.selectionStart;
+              if (this.properties.shift) {
+                this.properties.value = `${this.properties.value.substring(0, start)}{${this.properties.value.substring(start)}`;
+                this.triggerEvent('oninput');
+                this.elements.textarea.focus();
+                this.elements.textarea.selectionEnd = start + 1;
+              } else {
+                this.properties.value = `${this.properties.value.substring(0, start)}${key}${this.properties.value.substring(start)}`;
+                this.triggerEvent('oninput');
+                this.elements.textarea.focus();
+                this.elements.textarea.selectionEnd = start + 1;
+              }
+            });
+            break;
+          case ']':
+            keyItem.classList.add(cssClasses.KEYBOARD_SHIFT_KEY);
+            keyItem.textContent = key;
+            // Событие клавиатуры
+            this.elements.textarea.addEventListener('keydown', (e) => {
+              const start = this.elements.textarea.selectionStart;
+              if (e.key === key || e.key === '}') {
+                if (this.properties.shift) {
+                  keyItem.classList.add('keyboard__key_active');
+                  e.preventDefault();
+                  this.properties.value = `${this.properties.value.substring(0, start)}}${this.properties.value.substring(start)}`;
+                  this.triggerEvent('oninput');
+                  this.elements.textarea.focus();
+                  this.elements.textarea.selectionEnd = start + 1;
+                } else {
+                  keyItem.classList.add('keyboard__key_active');
+                  e.preventDefault();
+                  this.properties.value = `${this.properties.value.substring(0, start)}${key}${this.properties.value.substring(start)}`;
+                  this.triggerEvent('oninput');
+                  this.elements.textarea.focus();
+                  this.elements.textarea.selectionEnd = start + 1;
+                }
+              }
+            });
+            this.elements.textarea.addEventListener('keyup', (e) => {
+              if (e.key === key || e.key === '}') {
+                keyItem.classList.remove('keyboard__key_active');
+              }
+            });
+            // Событие мышки
+            keyItem.addEventListener('click', () => {
+              const start = this.elements.textarea.selectionStart;
+              if (this.properties.shift) {
+                this.properties.value = `${this.properties.value.substring(0, start)}}${this.properties.value.substring(start)}`;
+                this.triggerEvent('oninput');
+                this.elements.textarea.focus();
+                this.elements.textarea.selectionEnd = start + 1;
+              } else {
+                this.properties.value = `${this.properties.value.substring(0, start)}${key}${this.properties.value.substring(start)}`;
+                this.triggerEvent('oninput');
+                this.elements.textarea.focus();
+                this.elements.textarea.selectionEnd = start + 1;
+              }
+            });
+            break;
+          case '\\':
+            keyItem.classList.add(cssClasses.KEYBOARD_SHIFT_KEY);
+            keyItem.textContent = key;
+            // Событие клавиатуры
+            this.elements.textarea.addEventListener('keydown', (e) => {
+              const start = this.elements.textarea.selectionStart;
+              if (e.key === key || e.key === '|') {
+                if (this.properties.shift) {
+                  keyItem.classList.add('keyboard__key_active');
+                  e.preventDefault();
+                  this.properties.value = `${this.properties.value.substring(0, start)}|${this.properties.value.substring(start)}`;
+                  this.triggerEvent('oninput');
+                  this.elements.textarea.focus();
+                  this.elements.textarea.selectionEnd = start + 1;
+                } else {
+                  keyItem.classList.add('keyboard__key_active');
+                  e.preventDefault();
+                  this.properties.value = `${this.properties.value.substring(0, start)}${key}${this.properties.value.substring(start)}`;
+                  this.triggerEvent('oninput');
+                  this.elements.textarea.focus();
+                  this.elements.textarea.selectionEnd = start + 1;
+                }
+              }
+            });
+            this.elements.textarea.addEventListener('keyup', (e) => {
+              if (e.key === key || e.key === '|') {
+                keyItem.classList.remove('keyboard__key_active');
+              }
+            });
+            // Событие мышки
+            keyItem.addEventListener('click', () => {
+              const start = this.elements.textarea.selectionStart;
+              if (this.properties.shift) {
+                this.properties.value = `${this.properties.value.substring(0, start)}|${this.properties.value.substring(start)}`;
+                this.triggerEvent('oninput');
+                this.elements.textarea.focus();
+                this.elements.textarea.selectionEnd = start + 1;
+              } else {
+                this.properties.value = `${this.properties.value.substring(0, start)}${key}${this.properties.value.substring(start)}`;
+                this.triggerEvent('oninput');
+                this.elements.textarea.focus();
+                this.elements.textarea.selectionEnd = start + 1;
+              }
+            });
+            break;
+          case ';':
+            keyItem.classList.add(cssClasses.KEYBOARD_SHIFT_KEY);
+            keyItem.textContent = key;
+            // Событие клавиатуры
+            this.elements.textarea.addEventListener('keydown', (e) => {
+              const start = this.elements.textarea.selectionStart;
+              if (e.key === key || e.key === ':') {
+                if (this.properties.shift) {
+                  keyItem.classList.add('keyboard__key_active');
+                  e.preventDefault();
+                  this.properties.value = `${this.properties.value.substring(0, start)}:${this.properties.value.substring(start)}`;
+                  this.triggerEvent('oninput');
+                  this.elements.textarea.focus();
+                  this.elements.textarea.selectionEnd = start + 1;
+                } else {
+                  keyItem.classList.add('keyboard__key_active');
+                  e.preventDefault();
+                  this.properties.value = `${this.properties.value.substring(0, start)}${key}${this.properties.value.substring(start)}`;
+                  this.triggerEvent('oninput');
+                  this.elements.textarea.focus();
+                  this.elements.textarea.selectionEnd = start + 1;
+                }
+              }
+            });
+            this.elements.textarea.addEventListener('keyup', (e) => {
+              if (e.key === key || e.key === ':') {
+                keyItem.classList.remove('keyboard__key_active');
+              }
+            });
+            // Событие мышки
+            keyItem.addEventListener('click', () => {
+              const start = this.elements.textarea.selectionStart;
+              if (this.properties.shift) {
+                this.properties.value = `${this.properties.value.substring(0, start)}:${this.properties.value.substring(start)}`;
+                this.triggerEvent('oninput');
+                this.elements.textarea.focus();
+                this.elements.textarea.selectionEnd = start + 1;
+              } else {
+                this.properties.value = `${this.properties.value.substring(0, start)}${key}${this.properties.value.substring(start)}`;
+                this.triggerEvent('oninput');
+                this.elements.textarea.focus();
+                this.elements.textarea.selectionEnd = start + 1;
+              }
+            });
+            break;
+          case '\'':
+            keyItem.classList.add(cssClasses.KEYBOARD_SHIFT_KEY);
+            keyItem.textContent = key;
+            // Событие клавиатуры
+            this.elements.textarea.addEventListener('keydown', (e) => {
+              const start = this.elements.textarea.selectionStart;
+              if (e.key === key || e.key === '"') {
+                if (this.properties.shift) {
+                  keyItem.classList.add('keyboard__key_active');
+                  e.preventDefault();
+                  this.properties.value = `${this.properties.value.substring(0, start)}"${this.properties.value.substring(start)}`;
+                  this.triggerEvent('oninput');
+                  this.elements.textarea.focus();
+                  this.elements.textarea.selectionEnd = start + 1;
+                } else {
+                  keyItem.classList.add('keyboard__key_active');
+                  e.preventDefault();
+                  this.properties.value = `${this.properties.value.substring(0, start)}${key}${this.properties.value.substring(start)}`;
+                  this.triggerEvent('oninput');
+                  this.elements.textarea.focus();
+                  this.elements.textarea.selectionEnd = start + 1;
+                }
+              }
+            });
+            this.elements.textarea.addEventListener('keyup', (e) => {
+              if (e.key === key || e.key === '"') {
+                keyItem.classList.remove('keyboard__key_active');
+              }
+            });
+            // Событие мышки
+            keyItem.addEventListener('click', () => {
+              const start = this.elements.textarea.selectionStart;
+              if (this.properties.shift) {
+                this.properties.value = `${this.properties.value.substring(0, start)}"${this.properties.value.substring(start)}`;
+                this.triggerEvent('oninput');
+                this.elements.textarea.focus();
+                this.elements.textarea.selectionEnd = start + 1;
+              } else {
+                this.properties.value = `${this.properties.value.substring(0, start)}${key}${this.properties.value.substring(start)}`;
+                this.triggerEvent('oninput');
+                this.elements.textarea.focus();
+                this.elements.textarea.selectionEnd = start + 1;
+              }
+            });
+            break;
+          case ',':
+            keyItem.classList.add(cssClasses.KEYBOARD_SHIFT_KEY);
+            keyItem.textContent = key;
+            // Событие клавиатуры
+            this.elements.textarea.addEventListener('keydown', (e) => {
+              const start = this.elements.textarea.selectionStart;
+              if (e.key === key || e.key === '<') {
+                if (this.properties.shift) {
+                  keyItem.classList.add('keyboard__key_active');
+                  e.preventDefault();
+                  this.properties.value = `${this.properties.value.substring(0, start)}<${this.properties.value.substring(start)}`;
+                  this.triggerEvent('oninput');
+                  this.elements.textarea.focus();
+                  this.elements.textarea.selectionEnd = start + 1;
+                } else {
+                  keyItem.classList.add('keyboard__key_active');
+                  e.preventDefault();
+                  this.properties.value = `${this.properties.value.substring(0, start)}${key}${this.properties.value.substring(start)}`;
+                  this.triggerEvent('oninput');
+                  this.elements.textarea.focus();
+                  this.elements.textarea.selectionEnd = start + 1;
+                }
+              }
+            });
+            this.elements.textarea.addEventListener('keyup', (e) => {
+              if (e.key === key || e.key === '<') {
+                keyItem.classList.remove('keyboard__key_active');
+              }
+            });
+            // Событие мышки
+            keyItem.addEventListener('click', () => {
+              const start = this.elements.textarea.selectionStart;
+              if (this.properties.shift) {
+                this.properties.value = `${this.properties.value.substring(0, start)}<${this.properties.value.substring(start)}`;
+                this.triggerEvent('oninput');
+                this.elements.textarea.focus();
+                this.elements.textarea.selectionEnd = start + 1;
+              } else {
+                this.properties.value = `${this.properties.value.substring(0, start)}${key}${this.properties.value.substring(start)}`;
+                this.triggerEvent('oninput');
+                this.elements.textarea.focus();
+                this.elements.textarea.selectionEnd = start + 1;
+              }
+            });
+            break;
+          case '.':
+            keyItem.classList.add(cssClasses.KEYBOARD_SHIFT_KEY);
+            keyItem.textContent = key;
+            // Событие клавиатуры
+            this.elements.textarea.addEventListener('keydown', (e) => {
+              const start = this.elements.textarea.selectionStart;
+              if (e.key === key || e.key === '>') {
+                if (this.properties.shift) {
+                  keyItem.classList.add('keyboard__key_active');
+                  e.preventDefault();
+                  this.properties.value = `${this.properties.value.substring(0, start)}>${this.properties.value.substring(start)}`;
+                  this.triggerEvent('oninput');
+                  this.elements.textarea.focus();
+                  this.elements.textarea.selectionEnd = start + 1;
+                } else {
+                  keyItem.classList.add('keyboard__key_active');
+                  e.preventDefault();
+                  this.properties.value = `${this.properties.value.substring(0, start)}${key}${this.properties.value.substring(start)}`;
+                  this.triggerEvent('oninput');
+                  this.elements.textarea.focus();
+                  this.elements.textarea.selectionEnd = start + 1;
+                }
+              }
+            });
+            this.elements.textarea.addEventListener('keyup', (e) => {
+              if (e.key === key || e.key === '>') {
+                keyItem.classList.remove('keyboard__key_active');
+              }
+            });
+            // Событие мышки
+            keyItem.addEventListener('click', () => {
+              const start = this.elements.textarea.selectionStart;
+              if (this.properties.shift) {
+                this.properties.value = `${this.properties.value.substring(0, start)}>${this.properties.value.substring(start)}`;
+                this.triggerEvent('oninput');
+                this.elements.textarea.focus();
+                this.elements.textarea.selectionEnd = start + 1;
+              } else {
+                this.properties.value = `${this.properties.value.substring(0, start)}${key}${this.properties.value.substring(start)}`;
+                this.triggerEvent('oninput');
+                this.elements.textarea.focus();
+                this.elements.textarea.selectionEnd = start + 1;
+              }
+            });
+            break;
+          case '/':
+            keyItem.classList.add(cssClasses.KEYBOARD_SHIFT_KEY);
+            keyItem.textContent = key;
+            // Событие клавиатуры
+            this.elements.textarea.addEventListener('keydown', (e) => {
+              const start = this.elements.textarea.selectionStart;
+              if (e.key === key || e.key === '?') {
+                if (this.properties.shift) {
+                  keyItem.classList.add('keyboard__key_active');
+                  e.preventDefault();
+                  this.properties.value = `${this.properties.value.substring(0, start)}?${this.properties.value.substring(start)}`;
+                  this.triggerEvent('oninput');
+                  this.elements.textarea.focus();
+                  this.elements.textarea.selectionEnd = start + 1;
+                } else {
+                  keyItem.classList.add('keyboard__key_active');
+                  e.preventDefault();
+                  this.properties.value = `${this.properties.value.substring(0, start)}${key}${this.properties.value.substring(start)}`;
+                  this.triggerEvent('oninput');
+                  this.elements.textarea.focus();
+                  this.elements.textarea.selectionEnd = start + 1;
+                }
+              }
+            });
+            this.elements.textarea.addEventListener('keyup', (e) => {
+              if (e.key === key || e.key === '?') {
+                keyItem.classList.remove('keyboard__key_active');
+              }
+            });
+            // Событие мышки
+            keyItem.addEventListener('click', () => {
+              const start = this.elements.textarea.selectionStart;
+              if (this.properties.shift) {
+                this.properties.value = `${this.properties.value.substring(0, start)}?${this.properties.value.substring(start)}`;
+                this.triggerEvent('oninput');
+                this.elements.textarea.focus();
+                this.elements.textarea.selectionEnd = start + 1;
+              } else {
+                this.properties.value = `${this.properties.value.substring(0, start)}${key}${this.properties.value.substring(start)}`;
+                this.triggerEvent('oninput');
+                this.elements.textarea.focus();
+                this.elements.textarea.selectionEnd = start + 1;
+              }
+            });
+            break;
           default: keyItem.classList.add(cssClasses.KEYBOARD_KEY);
             keyItem.textContent = key.toLowerCase();
             // Событие клавиатуры
@@ -605,6 +1590,7 @@ class Keyboard {
         fragment.appendChild(this.elements.keysRow);
       });
     }
+ 
     return fragment;
   }
 
@@ -618,8 +1604,12 @@ class Keyboard {
   putButtonsInArr() {
     const childrenArr = [];
     for (let i = 0; i < this.elements.keysWrapper.children.length; i += 1) {
+      childrenArr.push(this.elements.keysWrapper.children[i].querySelectorAll(`.${cssClasses.KEYBOARD_SHIFT_KEY}`));
+    }
+    for (let i = 0; i < this.elements.keysWrapper.children.length; i += 1) {
       childrenArr.push(this.elements.keysWrapper.children[i].querySelectorAll(`.${cssClasses.KEYBOARD_KEY}`));
     }
+
     const keysArr = [];
     childrenArr.forEach((item) => {
       item.forEach((it) => {
@@ -657,11 +1647,18 @@ class Keyboard {
     this.properties.shift = !this.properties.shift;
     this.putButtonsInArr();
     console.log(this.properties.shift, this.properties.capsLock);
-    this.elements.keys.forEach((i) => {
+    const withoutShift = ['`', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', '[',
+    ']', '\\', ';', '\'', ',', '.', '/'];
+    const shiftArr = ['~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '{',
+      '}', '|', ':', '"', '<', '>', '?'];
+    this.elements.keys.forEach((i, index) => {
       const item = i;
-      // item.textContent = (this.properties.shift === true && this.properties.capsLock === false)
-      // ? item.textContent.toUpperCase()
-      //   : item.textContent.toLowerCase();
+      if (this.properties.shift && item.classList.contains(cssClasses.KEYBOARD_SHIFT_KEY)) {
+        console.log(item, index);
+        item.textContent = shiftArr[index];
+      } else if (!this.properties.shift && item.classList.contains(cssClasses.KEYBOARD_SHIFT_KEY)) {
+        item.textContent = withoutShift[index];
+      }
       if (this.properties.shift && !this.properties.capsLock) {
         item.textContent = item.textContent.toUpperCase();
       } else {
