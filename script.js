@@ -1,6 +1,7 @@
 const cssClasses = {
   TEXT_AREA: 'textarea',
   KEYBOARD: 'keyboard',
+  KEYBOARD_DESCRIPTION: 'keyboard__description',
   KEYBOARD_WRAPPER: 'keyboard__wrapper',
   KEYBOARD_ROW: 'keyboard__row',
   KEYBOARD_KEY: 'keyboard__key',
@@ -17,6 +18,7 @@ class Keyboard {
       keyboard: null,
       keysWrapper: null,
       keysRow: null,
+      keyboardDescription: null,
       keys: [],
     };
     this.eventHandlers = {
@@ -29,7 +31,8 @@ class Keyboard {
       shift: false,
       isCapsLockDown: false,
       isShiftDown: false,
-      language: 'eu',
+      language: localStorage.getItem('language') || 'eu',
+      languageLocalStorage: null,
     };
   }
 
@@ -37,86 +40,43 @@ class Keyboard {
     this.elements.textarea = document.createElement('textarea');
     this.elements.keyboard = document.createElement('div');
     this.elements.keysWrapper = document.createElement('div');
+    this.elements.keyboardDescription = document.createElement('p');
 
     this.elements.textarea.classList.add(cssClasses.TEXT_AREA);
     this.elements.keyboard.classList.add(cssClasses.KEYBOARD);
     this.elements.keysWrapper.classList.add(cssClasses.KEYBOARD_WRAPPER);
+    this.elements.keyboardDescription.classList.add(cssClasses.KEYBOARD_DESCRIPTION);
+    this.elements.keyboardDescription.textContent = 'Привет! Клавиатура создана в операционной системе Windows. Для переключения языка - комбинация: левыe "ctrl" + "alt"';
     this.elements.keysWrapper.appendChild((this.createKeys(this.keyboardKeys())));
     this.elements.keyboard.appendChild(this.elements.keysWrapper);
     document.body.appendChild(this.elements.textarea);
     document.body.appendChild(this.elements.keyboard);
-
-    // this.elements.textarea.addEventListener('focus', () => {
-    //   this.open(this.elements.textarea.value, (currentValue) => {
-    //     this.elements.textarea.value = currentValue;
-    //   });
-    // });
-    
+    document.body.appendChild(this.elements.keyboardDescription);
+    // localStorage.getItem('language');
     this.elements.textarea.addEventListener('focus', () => {
       this.open(this.elements.textarea.value, (currentValue) => {
         this.elements.textarea.value = currentValue;
-        // this.properties.textAreaActive = !this.properties.textAreaActive;
       });
     });
-    // document.onkeydown = (event) => {
-    //   if (event.key === 'Alt') {
-    //     document.onkeydown = (e) => {
-    //       if (e.key === 'Control') {
-    //         console.log('work');
-    //         if (this.properties.language === 'eu') {
-    //           this.properties.language = 'ru';
-    //           // this.elements.keysWrapper.innerHTML = '';
-    //           // this.elements.keysWrapper.appendChild(this.createKeys());
-    //         } else if (this.properties.language === 'ru') {
-    //           this.properties.language = 'eu';
-    //           // this.elements.keysWrapper.innerHTML = '';
-    //           // this.elements.keysWrapper.appendChild(this.createKeys());
-    //         }
-    //         console.log(this.properties.language);
-    //       }
-    //     };
-    //   }
-    // };
-  }
-
-  // document.onkeydown = (event) => {
-  //   if (event.key === 'Alt') {
-  //       document.onkeydown = (e) => {
-  //         if (e.key === 'Control') {
-  //           console.log('work');
-  //           if (this.properties.language === 'eu') {
-  //             this.properties.language = 'ru';
-  //             // this.elements.keysWrapper.innerHTML = '';
-  //             // this.elements.keysWrapper.appendChild(this.createKeys());
-  //           } else if (this.properties.language === 'ru') {
-  //             this.properties.language = 'eu';
-  //             // this.elements.keysWrapper.innerHTML = '';
-  //             // this.elements.keysWrapper.appendChild(this.createKeys());
-  //           }
-  //           console.log(this.properties.language);
-  //         }
-  //       };
-  //     }
-  //   };
-
-  jekaFunction() {
-    const keyArraySHIFT = [
-      ['~', '!', '@', '#', '$', '%', '^', '7', '8', '9', '0', '-', '=', 'Backspace'],
-      ['Tab', 'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', '[', ']', '\\', 'Del'],
-      ['Caps Lock', 'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', ';', '\'', 'Enter'],
-      ['LShift', 'z', 'x', 'c', 'v', 'b', 'n', 'm', ',', '.', '/', 'up', 'RShift'],
-      ['LCtrl', 'Win', 'LAlt', 'Space', 'RAlt', 'left', 'bottom', 'right', 'RCtrl'],
-    ];
-
-    const keyArrayEuS = [
-      ['`', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', 'Backspace'],
-      ['Tab', 'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', '[', ']', '\\', 'Del'],
-      ['Caps Lock', 'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', ';', '\'', 'Enter'],
-      ['LShift', 'z', 'x', 'c', 'v', 'b', 'n', 'm', ',', '.', '/', 'up', 'RShift'],
-      ['LCtrl', 'Win', 'LAlt', 'Space', 'RAlt', 'left', 'bottom', 'right', 'RCtrl'],
-    ];
-
-
+    document.onkeydown = (event) => {
+      if (event.key === 'Alt') {
+        document.onkeydown = (e) => {
+          if (e.key === 'Control') {
+            console.log('work');
+            if (this.properties.language === 'eu') {
+              this.properties.language = 'ru';
+              this.elements.keysWrapper.innerHTML = '';
+              this.elements.keysWrapper.appendChild(this.createKeys(this.keyboardKeys()));
+            } else if (this.properties.language === 'ru') {
+              this.properties.language = 'eu';
+              this.elements.keysWrapper.innerHTML = '';
+              this.elements.keysWrapper.appendChild(this.createKeys(this.keyboardKeys()));
+            }
+          }
+          localStorage.setItem('language', this.properties.language);
+        };
+      }
+    };
   }
 
   keyboardKeys() {
@@ -146,14 +106,6 @@ class Keyboard {
       return `<span class="material-symbols-outlined">${iconName}</span>`;
     }
     const fragment = document.createDocumentFragment();
-    // const keyArray = [
-    //   ['`', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', 'Backspace'],
-    //   ['Tab', 'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', '[', ']', '\\', 'Del'],
-    //   ['Caps Lock', 'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', ';', '\'', 'Enter'],
-    //   ['LShift', 'z', 'x', 'c', 'v', 'b', 'n', 'm', ',', '.', '/', 'up', 'RShift'],
-    //   ['LCtrl', 'Win', 'LAlt', 'Space', 'RAlt', 'left', 'bottom', 'right', 'RCtrl'],
-    // ];
-
     for (let i = 0; i < array.length; i += 1) {
       this.elements.keysRow = document.createElement('div');
       this.elements.keysRow.classList.add('keyboard__row');
@@ -691,11 +643,11 @@ class Keyboard {
             // Событие клавиатуры
             this.elements.textarea.addEventListener('keydown', (e) => {
               const start = this.elements.textarea.selectionStart;
-              if (e.key === key || e.key === '@') {
+              if (e.key === key || e.key === '@' || (e.key === '"' && this.properties.language === 'ru')) {
                 if (this.properties.shift) {
                   keyItem.classList.add('keyboard__key_active');
                   e.preventDefault();
-                  this.properties.value = `${this.properties.value.substring(0, start)}@${this.properties.value.substring(start)}`;
+                  this.properties.value = `${this.properties.value.substring(0, start)}${e.key === '@' ? '@' : '"'}${this.properties.value.substring(start)}`;
                   this.triggerEvent('oninput');
                   this.elements.textarea.focus();
                   this.elements.textarea.selectionEnd = start + 1;
@@ -710,7 +662,7 @@ class Keyboard {
               }
             });
             this.elements.textarea.addEventListener('keyup', (e) => {
-              if (e.key === key || e.key === '@') {
+              if (e.key === key || e.key === '@' || (e.key === '"' && this.properties.language === 'ru')) {
                 keyItem.classList.remove('keyboard__key_active');
               }
             });
@@ -718,7 +670,7 @@ class Keyboard {
             keyItem.addEventListener('click', () => {
               const start = this.elements.textarea.selectionStart;
               if (this.properties.shift) {
-                this.properties.value = `${this.properties.value.substring(0, start)}@${this.properties.value.substring(start)}`;
+                this.properties.value = `${this.properties.value.substring(0, start)}${this.properties.language === 'eu' ? '@' : '"'}${this.properties.value.substring(start)}`;
                 this.triggerEvent('oninput');
                 this.elements.textarea.focus();
                 this.elements.textarea.selectionEnd = start + 1;
@@ -736,11 +688,11 @@ class Keyboard {
             // Событие клавиатуры
             this.elements.textarea.addEventListener('keydown', (e) => {
               const start = this.elements.textarea.selectionStart;
-              if (e.key === key || e.key === '#') {
+              if (e.key === key || e.key === '#' || e.key === '№') {
                 if (this.properties.shift) {
                   keyItem.classList.add('keyboard__key_active');
                   e.preventDefault();
-                  this.properties.value = `${this.properties.value.substring(0, start)}#${this.properties.value.substring(start)}`;
+                  this.properties.value = `${this.properties.value.substring(0, start)}${e.key === '#' ? '#' : '№'}${this.properties.value.substring(start)}`;
                   this.triggerEvent('oninput');
                   this.elements.textarea.focus();
                   this.elements.textarea.selectionEnd = start + 1;
@@ -755,7 +707,7 @@ class Keyboard {
               }
             });
             this.elements.textarea.addEventListener('keyup', (e) => {
-              if (e.key === key || e.key === '#') {
+              if (e.key === key || e.key === '#' || e.key === '№') {
                 keyItem.classList.remove('keyboard__key_active');
               }
             });
@@ -763,7 +715,7 @@ class Keyboard {
             keyItem.addEventListener('click', () => {
               const start = this.elements.textarea.selectionStart;
               if (this.properties.shift) {
-                this.properties.value = `${this.properties.value.substring(0, start)}#${this.properties.value.substring(start)}`;
+                this.properties.value = `${this.properties.value.substring(0, start)}${this.properties.language === 'eu' ? '#' : '№'}${this.properties.value.substring(start)}`;
                 this.triggerEvent('oninput');
                 this.elements.textarea.focus();
                 this.elements.textarea.selectionEnd = start + 1;
@@ -781,11 +733,11 @@ class Keyboard {
             // Событие клавиатуры
             this.elements.textarea.addEventListener('keydown', (e) => {
               const start = this.elements.textarea.selectionStart;
-              if (e.key === key || e.key === '$') {
+              if (e.key === key || e.key === '$' || (e.key === ';' && this.properties.language === 'ru')) {
                 if (this.properties.shift) {
                   keyItem.classList.add('keyboard__key_active');
                   e.preventDefault();
-                  this.properties.value = `${this.properties.value.substring(0, start)}$${this.properties.value.substring(start)}`;
+                  this.properties.value = `${this.properties.value.substring(0, start)}${e.key === '$' ? '$' : ';'}${this.properties.value.substring(start)}`;
                   this.triggerEvent('oninput');
                   this.elements.textarea.focus();
                   this.elements.textarea.selectionEnd = start + 1;
@@ -800,7 +752,7 @@ class Keyboard {
               }
             });
             this.elements.textarea.addEventListener('keyup', (e) => {
-              if (e.key === key || e.key === '$') {
+              if (e.key === key || e.key === '$' || e.key === ';') {
                 keyItem.classList.remove('keyboard__key_active');
               }
             });
@@ -808,7 +760,7 @@ class Keyboard {
             keyItem.addEventListener('click', () => {
               const start = this.elements.textarea.selectionStart;
               if (this.properties.shift) {
-                this.properties.value = `${this.properties.value.substring(0, start)}$${this.properties.value.substring(start)}`;
+                this.properties.value = `${this.properties.value.substring(0, start)}${this.properties.language === 'eu' ? '$' : ';'}${this.properties.value.substring(start)}`;
                 this.triggerEvent('oninput');
                 this.elements.textarea.focus();
                 this.elements.textarea.selectionEnd = start + 1;
@@ -871,11 +823,11 @@ class Keyboard {
             // Событие клавиатуры
             this.elements.textarea.addEventListener('keydown', (e) => {
               const start = this.elements.textarea.selectionStart;
-              if (e.key === key || e.key === '^') {
+              if (e.key === key || e.key === '^' || (e.key === ':' && this.properties.language === 'ru')) {
                 if (this.properties.shift) {
                   keyItem.classList.add('keyboard__key_active');
                   e.preventDefault();
-                  this.properties.value = `${this.properties.value.substring(0, start)}^${this.properties.value.substring(start)}`;
+                  this.properties.value = `${this.properties.value.substring(0, start)}${e.key === '^' ? '^' : ':'}${this.properties.value.substring(start)}`;
                   this.triggerEvent('oninput');
                   this.elements.textarea.focus();
                   this.elements.textarea.selectionEnd = start + 1;
@@ -890,7 +842,7 @@ class Keyboard {
               }
             });
             this.elements.textarea.addEventListener('keyup', (e) => {
-              if (e.key === key || e.key === '^') {
+              if (e.key === key || e.key === '^' || e.key === ':') {
                 keyItem.classList.remove('keyboard__key_active');
               }
             });
@@ -898,7 +850,7 @@ class Keyboard {
             keyItem.addEventListener('click', () => {
               const start = this.elements.textarea.selectionStart;
               if (this.properties.shift) {
-                this.properties.value = `${this.properties.value.substring(0, start)}^${this.properties.value.substring(start)}`;
+                this.properties.value = `${this.properties.value.substring(0, start)}${this.properties.language === 'eu' ? '^' : ':'}${this.properties.value.substring(start)}`;
                 this.triggerEvent('oninput');
                 this.elements.textarea.focus();
                 this.elements.textarea.selectionEnd = start + 1;
@@ -916,11 +868,11 @@ class Keyboard {
             // Событие клавиатуры
             this.elements.textarea.addEventListener('keydown', (e) => {
               const start = this.elements.textarea.selectionStart;
-              if (e.key === key || e.key === '&') {
+              if (e.key === key || e.key === '&' || (e.key === '?' && this.properties.language === 'ru')) {
                 if (this.properties.shift) {
                   keyItem.classList.add('keyboard__key_active');
                   e.preventDefault();
-                  this.properties.value = `${this.properties.value.substring(0, start)}&${this.properties.value.substring(start)}`;
+                  this.properties.value = `${this.properties.value.substring(0, start)}${e.key === '&' ? '&' : '?'}${this.properties.value.substring(start)}`;
                   this.triggerEvent('oninput');
                   this.elements.textarea.focus();
                   this.elements.textarea.selectionEnd = start + 1;
@@ -935,7 +887,7 @@ class Keyboard {
               }
             });
             this.elements.textarea.addEventListener('keyup', (e) => {
-              if (e.key === key || e.key === '&') {
+              if (e.key === key || e.key === '&' || e.key === '?') {
                 keyItem.classList.remove('keyboard__key_active');
               }
             });
@@ -943,7 +895,7 @@ class Keyboard {
             keyItem.addEventListener('click', () => {
               const start = this.elements.textarea.selectionStart;
               if (this.properties.shift) {
-                this.properties.value = `${this.properties.value.substring(0, start)}&${this.properties.value.substring(start)}`;
+                this.properties.value = `${this.properties.value.substring(0, start)}${this.properties.language === 'eu' ? '&' : '?'}${this.properties.value.substring(start)}`;
                 this.triggerEvent('oninput');
                 this.elements.textarea.focus();
                 this.elements.textarea.selectionEnd = start + 1;
@@ -1276,11 +1228,11 @@ class Keyboard {
             // Событие клавиатуры
             this.elements.textarea.addEventListener('keydown', (e) => {
               const start = this.elements.textarea.selectionStart;
-              if (e.key === key || e.key === '|') {
+              if (e.key === key || e.key === '|' || (e.key === '/' && this.properties.language === 'ru')) {
                 if (this.properties.shift) {
                   keyItem.classList.add('keyboard__key_active');
                   e.preventDefault();
-                  this.properties.value = `${this.properties.value.substring(0, start)}|${this.properties.value.substring(start)}`;
+                  this.properties.value = `${this.properties.value.substring(0, start)}${e.key === '|' ? '|' : '/'}${this.properties.value.substring(start)}`;
                   this.triggerEvent('oninput');
                   this.elements.textarea.focus();
                   this.elements.textarea.selectionEnd = start + 1;
@@ -1295,7 +1247,7 @@ class Keyboard {
               }
             });
             this.elements.textarea.addEventListener('keyup', (e) => {
-              if (e.key === key || e.key === '|') {
+              if (e.key === key || e.key === '|' || e.key === '/') {
                 keyItem.classList.remove('keyboard__key_active');
               }
             });
@@ -1303,7 +1255,7 @@ class Keyboard {
             keyItem.addEventListener('click', () => {
               const start = this.elements.textarea.selectionStart;
               if (this.properties.shift) {
-                this.properties.value = `${this.properties.value.substring(0, start)}|${this.properties.value.substring(start)}`;
+                this.properties.value = `${this.properties.value.substring(0, start)}${this.properties.language === 'eu' ? '|' : '/'}${this.properties.value.substring(start)}`;
                 this.triggerEvent('oninput');
                 this.elements.textarea.focus();
                 this.elements.textarea.selectionEnd = start + 1;
@@ -1456,11 +1408,11 @@ class Keyboard {
             // Событие клавиатуры
             this.elements.textarea.addEventListener('keydown', (e) => {
               const start = this.elements.textarea.selectionStart;
-              if (e.key === key || e.key === '>') {
+              if (e.key === key || e.key === '>' || (e.key === ',' && this.properties.language === 'ru')) {
                 if (this.properties.shift) {
                   keyItem.classList.add('keyboard__key_active');
                   e.preventDefault();
-                  this.properties.value = `${this.properties.value.substring(0, start)}>${this.properties.value.substring(start)}`;
+                  this.properties.value = `${this.properties.value.substring(0, start)}${e.key === '>' ? '>' : ','}${this.properties.value.substring(start)}`;
                   this.triggerEvent('oninput');
                   this.elements.textarea.focus();
                   this.elements.textarea.selectionEnd = start + 1;
@@ -1475,7 +1427,7 @@ class Keyboard {
               }
             });
             this.elements.textarea.addEventListener('keyup', (e) => {
-              if (e.key === key || e.key === '>') {
+              if (e.key === key || e.key === '>' || e.key === ',') {
                 keyItem.classList.remove('keyboard__key_active');
               }
             });
@@ -1483,7 +1435,7 @@ class Keyboard {
             keyItem.addEventListener('click', () => {
               const start = this.elements.textarea.selectionStart;
               if (this.properties.shift) {
-                this.properties.value = `${this.properties.value.substring(0, start)}>${this.properties.value.substring(start)}`;
+                this.properties.value = `${this.properties.value.substring(0, start)}${this.properties.language === 'eu' ? '>' : ','}${this.properties.value.substring(start)}`;
                 this.triggerEvent('oninput');
                 this.elements.textarea.focus();
                 this.elements.textarea.selectionEnd = start + 1;
@@ -1590,7 +1542,6 @@ class Keyboard {
         fragment.appendChild(this.elements.keysRow);
       });
     }
- 
     return fragment;
   }
 
@@ -1623,18 +1574,6 @@ class Keyboard {
   toggleCapsLock() {
     this.properties.capsLock = !this.properties.capsLock;
     console.log('Caps toggled', this.properties.capsLock);
-    // const childrenArr = [];
-    // for (let i = 0; i < this.elements.keysWrapper.children.length; i += 1) {
-    //   childrenArr.push(this.elements.keysWrapper.children[i].querySelectorAll(`.${cssClasses.KEYBOARD_KEY}`));
-    // }
-    // const keysArr = [];
-    // childrenArr.forEach((item) => {
-    //   item.forEach((it) => {
-    //     // console.log(it)
-    //     keysArr.push(it);
-    //   });
-    // });
-    // this.elements.keys = keysArr;
     this.putButtonsInArr();
     this.elements.keys.forEach((i) => {
       const item = i;
@@ -1647,18 +1586,30 @@ class Keyboard {
     this.properties.shift = !this.properties.shift;
     this.putButtonsInArr();
     console.log(this.properties.shift, this.properties.capsLock);
-    const withoutShift = ['`', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', '[',
-    ']', '\\', ';', '\'', ',', '.', '/'];
-    const shiftArr = ['~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '{',
+    const withoutShiftEU = ['`', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', '[',
+      ']', '\\', ';', '\'', ',', '.', '/'];
+    const shiftArrEU = ['~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '{',
       '}', '|', ':', '"', '<', '>', '?'];
+
+    const withoutShiftRU = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=',
+      '\\', '.'];
+    const shiftArrRU = ['!', '"', '№', ';', '%', ':', '?', '*', '(', ')', '_', '+',
+      '/', ','];
     this.elements.keys.forEach((i, index) => {
       const item = i;
-      if (this.properties.shift && item.classList.contains(cssClasses.KEYBOARD_SHIFT_KEY)) {
-        console.log(item, index);
-        item.textContent = shiftArr[index];
-      } else if (!this.properties.shift && item.classList.contains(cssClasses.KEYBOARD_SHIFT_KEY)) {
-        item.textContent = withoutShift[index];
+      if (this.properties.shift && this.properties.language === 'eu' && item.classList.contains(cssClasses.KEYBOARD_SHIFT_KEY)) {
+        item.textContent = shiftArrEU[index];
+      } else if (!this.properties.shift && this.properties.language === 'eu' && item.classList.contains(cssClasses.KEYBOARD_SHIFT_KEY)) {
+        item.textContent = withoutShiftEU[index];
       }
+
+      if (this.properties.shift && this.properties.language === 'ru' && item.classList.contains(cssClasses.KEYBOARD_SHIFT_KEY)) {
+        item.textContent = shiftArrRU[index];
+      } else if (!this.properties.shift && this.properties.language === 'ru' && item.classList.contains(cssClasses.KEYBOARD_SHIFT_KEY)) {
+        item.textContent = withoutShiftRU[index];
+      }
+
+
       if (this.properties.shift && !this.properties.capsLock) {
         item.textContent = item.textContent.toUpperCase();
       } else {
@@ -1679,8 +1630,6 @@ const testKeyboard = new Keyboard();
 console.log(testKeyboard.elements.keyboard);
 testKeyboard.createElements();
 testKeyboard.elements.textarea.focus();
-// testKeyboard.createKeys();
-// testKeyboard.createKeys();
-document.onkeypress = function (event) {
-  console.log(event.key)
-}
+// document.onkeypress = function (event) {
+//   console.log(event.key)
+// }
