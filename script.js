@@ -58,22 +58,26 @@ class Keyboard {
       });
     });
     document.onkeydown = (event) => {
-      if (event.code === 'AltLeft') {
-        document.onkeydown = (e) => {
-          if (e.code === 'ControlLeft') {
-            if (this.properties.language === 'eu') {
-              this.properties.language = 'ru';
-              this.elements.keysWrapper.innerHTML = '';
-              this.elements.keysWrapper.appendChild(this.createKeys(this.keyboardKeys()));
-            } else if (this.properties.language === 'ru') {
-              this.properties.language = 'eu';
-              this.elements.keysWrapper.innerHTML = '';
-              this.elements.keysWrapper.appendChild(this.createKeys(this.keyboardKeys()));
-            }
-          }
-          localStorage.setItem('language', this.properties.language);
-        };
+      if (event.altKey && event.ctrlKey) {
+        if (this.properties.language === 'eu') {
+          this.properties.language = 'ru';
+          const clone = this.elements.textarea.cloneNode(true);
+          this.elements.textarea.replaceWith(clone);
+          this.elements.textarea = clone;
+          this.elements.keysWrapper.innerHTML = '';
+          this.elements.keysWrapper.appendChild(this.createKeys(this.keyboardKeys()));
+          this.elements.textarea.focus();
+        } else if (this.properties.language === 'ru') {
+          this.properties.language = 'eu';
+          const clone = this.elements.textarea.cloneNode(true);
+          this.elements.textarea.replaceWith(clone);
+          this.elements.textarea = clone;
+          this.elements.keysWrapper.innerHTML = '';
+          this.elements.keysWrapper.appendChild(this.createKeys(this.keyboardKeys()));
+          this.elements.textarea.focus();
+        }
       }
+      localStorage.setItem('language', this.properties.language);
     };
   }
 
