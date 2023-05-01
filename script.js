@@ -46,23 +46,21 @@ class Keyboard {
     this.elements.keyboard.classList.add(cssClasses.KEYBOARD);
     this.elements.keysWrapper.classList.add(cssClasses.KEYBOARD_WRAPPER);
     this.elements.keyboardDescription.classList.add(cssClasses.KEYBOARD_DESCRIPTION);
-    this.elements.keyboardDescription.textContent = 'Привет! Клавиатура создана в операционной системе Windows. Для переключения языка - комбинация: левыe "ctrl" + "alt"';
+    this.elements.keyboardDescription.textContent = 'Привет! Клавиатура создана в операционной системе Windows. Для переключения языка - комбинация: левыe "ctrl" + "alt". При смене раскладки на виртуальной клавиатуре нужно поменять раскладку на вашей физической клавиатуре ';
     this.elements.keysWrapper.appendChild((this.createKeys(this.keyboardKeys())));
     this.elements.keyboard.appendChild(this.elements.keysWrapper);
     document.body.appendChild(this.elements.textarea);
     document.body.appendChild(this.elements.keyboard);
     document.body.appendChild(this.elements.keyboardDescription);
-    // localStorage.getItem('language');
     this.elements.textarea.addEventListener('focus', () => {
       this.open(this.elements.textarea.value, (currentValue) => {
         this.elements.textarea.value = currentValue;
       });
     });
     document.onkeydown = (event) => {
-      if (event.key === 'Alt') {
+      if (event.code === 'AltLeft') {
         document.onkeydown = (e) => {
-          if (e.key === 'Control') {
-            console.log('work');
+          if (e.code === 'ControlLeft') {
             if (this.properties.language === 'eu') {
               this.properties.language = 'ru';
               this.elements.keysWrapper.innerHTML = '';
@@ -115,7 +113,6 @@ class Keyboard {
           case 'Backspace':
             keyItem.classList.add(cssClasses.KEYBOARD_SPECIAL_KEY, cssClasses.KEYBOARD_KEY_LARGE);
             keyItem.textContent = key;
-            // Событие клавиатуры
             this.elements.textarea.addEventListener('keydown', (e) => {
               if (e.key === 'Backspace') {
                 keyItem.classList.add('keyboard__key_active');
@@ -140,7 +137,6 @@ class Keyboard {
                 keyItem.classList.remove('keyboard__key_active');
               }
             });
-            // Событие мыши
             keyItem.addEventListener('click', () => {
               const start = this.elements.textarea.selectionStart;
               if (start === 0) {
@@ -160,7 +156,6 @@ class Keyboard {
           case 'Del':
             keyItem.classList.add(cssClasses.KEYBOARD_SPECIAL_KEY);
             keyItem.textContent = key;
-            // Событие клавиатуры
             this.elements.textarea.addEventListener('keydown', (e) => {
               if (e.code === 'Delete') {
                 keyItem.classList.add('keyboard__key_active');
@@ -180,7 +175,6 @@ class Keyboard {
                 keyItem.classList.remove('keyboard__key_active');
               }
             });
-            // Событие мыши
             keyItem.addEventListener('click', () => {
               const start = this.elements.textarea.selectionStart;
               const textAreaValueSplitted = this.elements.textarea.value.split('');
@@ -195,7 +189,6 @@ class Keyboard {
           case 'Caps Lock':
             keyItem.classList.add(cssClasses.KEYBOARD_SPECIAL_KEY, cssClasses.KEYBOARD_KEY_LARGE);
             keyItem.textContent = key;
-            // Событие клавиатуры
             this.elements.textarea.addEventListener('keydown', (e) => {
               if (e.code === 'CapsLock') {
                 if (!this.properties.isCapsLockDown) {
@@ -215,12 +208,12 @@ class Keyboard {
             keyItem.addEventListener('click', () => {
               this.toggleCapsLock();
               keyItem.classList.toggle('keyboard__key_active');
+              this.elements.textarea.focus();
             });
             break;
           case 'Enter':
             keyItem.classList.add(cssClasses.KEYBOARD_SPECIAL_KEY, cssClasses.KEYBOARD_KEY_LARGE);
             keyItem.textContent = key;
-            // Событие клавиатуры
             this.elements.textarea.addEventListener('keydown', (e) => {
               if (e.code === 'Enter') {
                 keyItem.classList.add('keyboard__key_active');
@@ -237,7 +230,6 @@ class Keyboard {
                 keyItem.classList.remove('keyboard__key_active');
               }
             });
-            // Событие мыши
             keyItem.addEventListener('click', () => {
               const start = this.elements.textarea.selectionStart;
               this.properties.value = `${this.properties.value.substring(0, start)}\n${this.properties.value.substring(start)}`;
@@ -249,7 +241,6 @@ class Keyboard {
           case 'LShift':
             keyItem.classList.add(cssClasses.KEYBOARD_SPECIAL_KEY, cssClasses.KEYBOARD_KEY_LARGE);
             keyItem.textContent = 'Shift';
-            // Событие клавиатуры
             this.elements.textarea.addEventListener('keydown', (e) => {
               if (e.code === 'ShiftLeft') {
                 if (!this.properties.isShiftDown) {
@@ -267,24 +258,55 @@ class Keyboard {
                 this.toggleShift();
               }
             });
-            // Событие мышки
+            keyItem.addEventListener('mousedown', () => {
+              this.elements.textarea.focus();
+              if (!this.properties.isShiftDown) {
+                this.properties.isShiftDown = !this.properties.isShiftDown;
+                keyItem.classList.add('keyboard__key_active');
+                this.toggleShift();
+              }
+            });
+            keyItem.addEventListener('mouseup', () => {
+              this.properties.isShiftDown = !this.properties.isShiftDown;
+              keyItem.classList.remove('keyboard__key_active');
+              this.toggleShift();
+              this.elements.textarea.focus();
+            });
             break;
           case 'RShift':
             keyItem.classList.add(cssClasses.KEYBOARD_SPECIAL_KEY, cssClasses.KEYBOARD_KEY_LARGE);
             keyItem.textContent = 'Shift';
-            // Событие клавиатуры
             this.elements.textarea.addEventListener('keydown', (e) => {
               if (e.code === 'ShiftRight') {
-                keyItem.classList.add('keyboard__key_active');
-                e.preventDefault();
+                if (!this.properties.isShiftDown) {
+                  this.properties.isShiftDown = !this.properties.isShiftDown;
+                  keyItem.classList.add('keyboard__key_active');
+                  e.preventDefault();
+                  this.toggleShift();
+                }
               }
             });
             this.elements.textarea.addEventListener('keyup', (e) => {
               if (e.code === 'ShiftRight') {
+                this.properties.isShiftDown = !this.properties.isShiftDown;
                 keyItem.classList.remove('keyboard__key_active');
+                this.toggleShift();
               }
             });
-            // Событие мышки
+            keyItem.addEventListener('mousedown', () => {
+              this.elements.textarea.focus();
+              if (!this.properties.isShiftDown) {
+                this.properties.isShiftDown = !this.properties.isShiftDown;
+                keyItem.classList.add('keyboard__key_active');
+                this.toggleShift();
+              }
+            });
+            keyItem.addEventListener('mouseup', () => {
+              this.properties.isShiftDown = !this.properties.isShiftDown;
+              keyItem.classList.remove('keyboard__key_active');
+              this.toggleShift();
+              this.elements.textarea.focus();
+            });
             break;
           case 'Space':
             keyItem.classList.add(
@@ -292,7 +314,6 @@ class Keyboard {
               cssClasses.KEYBOARD_KEY_EXTRA_LARGE,
             );
             keyItem.textContent = key;
-            // Событие клавиатуры
             this.elements.textarea.addEventListener('keydown', (e) => {
               if (e.code === 'Space') {
                 keyItem.classList.add('keyboard__key_active');
@@ -309,7 +330,6 @@ class Keyboard {
                 keyItem.classList.remove('keyboard__key_active');
               }
             });
-            // Событие мышки
             keyItem.addEventListener('click', () => {
               const start = this.elements.textarea.selectionStart;
               this.properties.value = `${this.properties.value.substring(0, start)} ${this.properties.value.substring(start)}`;
@@ -321,7 +341,6 @@ class Keyboard {
           case 'Tab':
             keyItem.classList.add(cssClasses.KEYBOARD_SPECIAL_KEY);
             keyItem.textContent = key;
-            // Событие клавиатуры
             this.elements.textarea.addEventListener('keydown', (e) => {
               if (e.code === 'Tab') {
                 keyItem.classList.add('keyboard__key_active');
@@ -338,7 +357,6 @@ class Keyboard {
                 keyItem.classList.remove('keyboard__key_active');
               }
             });
-            // Событие мышки
             keyItem.addEventListener('click', () => {
               const start = this.elements.textarea.selectionStart;
               this.properties.value = `${this.properties.value.substring(0, start)}    ${this.properties.value.substring(start)}`;
@@ -350,7 +368,6 @@ class Keyboard {
           case 'up':
             keyItem.classList.add(cssClasses.KEYBOARD_SPECIAL_KEY);
             keyItem.innerHTML = createArrowButtonIcon('arrow_upward');
-            // Событие клавиатуры
             this.elements.textarea.addEventListener('keydown', (e) => {
               if (e.code === 'ArrowUp') {
                 keyItem.classList.add('keyboard__key_active');
@@ -367,7 +384,6 @@ class Keyboard {
                 keyItem.classList.remove('keyboard__key_active');
               }
             });
-            // Событие мышки
             keyItem.addEventListener('click', () => {
               const start = this.elements.textarea.selectionStart;
               this.properties.value = `${this.properties.value.substring(0, start)}\u{02191}${this.properties.value.substring(start)}`;
@@ -379,7 +395,6 @@ class Keyboard {
           case 'bottom':
             keyItem.classList.add(cssClasses.KEYBOARD_SPECIAL_KEY);
             keyItem.innerHTML = createArrowButtonIcon('arrow_downward');
-            // Событие клавиатуры
             this.elements.textarea.addEventListener('keydown', (e) => {
               if (e.code === 'ArrowDown') {
                 keyItem.classList.add('keyboard__key_active');
@@ -396,7 +411,6 @@ class Keyboard {
                 keyItem.classList.remove('keyboard__key_active');
               }
             });
-            // Событие мышки
             keyItem.addEventListener('click', () => {
               const start = this.elements.textarea.selectionStart;
               this.properties.value = `${this.properties.value.substring(0, start)}\u{02193}${this.properties.value.substring(start)}`;
@@ -408,7 +422,6 @@ class Keyboard {
           case 'left':
             keyItem.classList.add(cssClasses.KEYBOARD_SPECIAL_KEY);
             keyItem.innerHTML = createArrowButtonIcon('arrow_back');
-            // Событие клавиатуры
             this.elements.textarea.addEventListener('keydown', (e) => {
               if (e.code === 'ArrowLeft') {
                 keyItem.classList.add('keyboard__key_active');
@@ -425,7 +438,6 @@ class Keyboard {
                 keyItem.classList.remove('keyboard__key_active');
               }
             });
-            // Событие мышки
             keyItem.addEventListener('click', () => {
               const start = this.elements.textarea.selectionStart;
               this.properties.value = `${this.properties.value.substring(0, start)}\u{02190}${this.properties.value.substring(start)}`;
@@ -437,7 +449,6 @@ class Keyboard {
           case 'right':
             keyItem.classList.add(cssClasses.KEYBOARD_SPECIAL_KEY);
             keyItem.innerHTML = createArrowButtonIcon('arrow_forward');
-            // Событие клавиатуры
             this.elements.textarea.addEventListener('keydown', (e) => {
               if (e.code === 'ArrowRight') {
                 keyItem.classList.add('keyboard__key_active');
@@ -454,7 +465,6 @@ class Keyboard {
                 keyItem.classList.remove('keyboard__key_active');
               }
             });
-            // Событие мышки
             keyItem.addEventListener('click', () => {
               const start = this.elements.textarea.selectionStart;
               this.properties.value = `${this.properties.value.substring(0, start)}\u{02192}${this.properties.value.substring(start)}`;
@@ -466,7 +476,6 @@ class Keyboard {
           case 'LCtrl':
             keyItem.classList.add(cssClasses.KEYBOARD_SPECIAL_KEY);
             keyItem.textContent = 'Ctrl';
-            // Событие клавиатуры
             this.elements.textarea.addEventListener('keydown', (e) => {
               if (e.code === 'ControlLeft') {
                 keyItem.classList.add('keyboard__key_active');
@@ -478,12 +487,10 @@ class Keyboard {
                 keyItem.classList.remove('keyboard__key_active');
               }
             });
-            // Событие мышки
             break;
           case 'RCtrl':
             keyItem.classList.add(cssClasses.KEYBOARD_SPECIAL_KEY);
             keyItem.textContent = 'Ctrl';
-            // Событие клавиатуры
             this.elements.textarea.addEventListener('keydown', (e) => {
               if (e.code === 'ControlRight') {
                 keyItem.classList.add('keyboard__key_active');
@@ -499,7 +506,6 @@ class Keyboard {
           case 'Win':
             keyItem.classList.add(cssClasses.KEYBOARD_SPECIAL_KEY);
             keyItem.textContent = key;
-            // Событие клавиатуры
             this.elements.textarea.addEventListener('keydown', (e) => {
               if (e.code === 'MetaLeft') {
                 keyItem.classList.add('keyboard__key_active');
@@ -511,12 +517,10 @@ class Keyboard {
                 keyItem.classList.remove('keyboard__key_active');
               }
             });
-            // Событие мышки
             break;
           case 'LAlt':
             keyItem.classList.add(cssClasses.KEYBOARD_SPECIAL_KEY);
             keyItem.textContent = 'Alt';
-            // Событие клавиатуры
             this.elements.textarea.addEventListener('keydown', (e) => {
               if (e.code === 'AltLeft') {
                 keyItem.classList.add('keyboard__key_active');
@@ -528,12 +532,10 @@ class Keyboard {
                 keyItem.classList.remove('keyboard__key_active');
               }
             });
-            // Событие мышки
             break;
           case 'RAlt':
             keyItem.classList.add(cssClasses.KEYBOARD_SPECIAL_KEY);
             keyItem.textContent = 'Alt';
-            // Событие клавиатуры
             this.elements.textarea.addEventListener('keydown', (e) => {
               if (e.code === 'AltRight') {
                 keyItem.classList.add('keyboard__key_active');
@@ -545,12 +547,10 @@ class Keyboard {
                 keyItem.classList.remove('keyboard__key_active');
               }
             });
-            // Событие мышки
             break;
           case '`':
             keyItem.classList.add(cssClasses.KEYBOARD_SHIFT_KEY);
             keyItem.textContent = key;
-            // Событие клавиатуры
             this.elements.textarea.addEventListener('keydown', (e) => {
               const start = this.elements.textarea.selectionStart;
               if (e.key === key || e.key === '~') {
@@ -576,7 +576,6 @@ class Keyboard {
                 keyItem.classList.remove('keyboard__key_active');
               }
             });
-            // Событие мышки
             keyItem.addEventListener('click', () => {
               const start = this.elements.textarea.selectionStart;
               if (this.properties.shift) {
@@ -595,7 +594,6 @@ class Keyboard {
           case '1':
             keyItem.classList.add(cssClasses.KEYBOARD_SHIFT_KEY);
             keyItem.textContent = key;
-            // Событие клавиатуры
             this.elements.textarea.addEventListener('keydown', (e) => {
               const start = this.elements.textarea.selectionStart;
               if (e.key === key || e.key === '!') {
@@ -621,7 +619,6 @@ class Keyboard {
                 keyItem.classList.remove('keyboard__key_active');
               }
             });
-            // Событие мышки
             keyItem.addEventListener('click', () => {
               const start = this.elements.textarea.selectionStart;
               if (this.properties.shift) {
@@ -640,7 +637,6 @@ class Keyboard {
           case '2':
             keyItem.classList.add(cssClasses.KEYBOARD_SHIFT_KEY);
             keyItem.textContent = key;
-            // Событие клавиатуры
             this.elements.textarea.addEventListener('keydown', (e) => {
               const start = this.elements.textarea.selectionStart;
               if (e.key === key || e.key === '@' || (e.key === '"' && this.properties.language === 'ru')) {
@@ -666,7 +662,6 @@ class Keyboard {
                 keyItem.classList.remove('keyboard__key_active');
               }
             });
-            // Событие мышки
             keyItem.addEventListener('click', () => {
               const start = this.elements.textarea.selectionStart;
               if (this.properties.shift) {
@@ -685,7 +680,6 @@ class Keyboard {
           case '3':
             keyItem.classList.add(cssClasses.KEYBOARD_SHIFT_KEY);
             keyItem.textContent = key;
-            // Событие клавиатуры
             this.elements.textarea.addEventListener('keydown', (e) => {
               const start = this.elements.textarea.selectionStart;
               if (e.key === key || e.key === '#' || e.key === '№') {
@@ -711,7 +705,6 @@ class Keyboard {
                 keyItem.classList.remove('keyboard__key_active');
               }
             });
-            // Событие мышки
             keyItem.addEventListener('click', () => {
               const start = this.elements.textarea.selectionStart;
               if (this.properties.shift) {
@@ -730,7 +723,6 @@ class Keyboard {
           case '4':
             keyItem.classList.add(cssClasses.KEYBOARD_SHIFT_KEY);
             keyItem.textContent = key;
-            // Событие клавиатуры
             this.elements.textarea.addEventListener('keydown', (e) => {
               const start = this.elements.textarea.selectionStart;
               if (e.key === key || e.key === '$' || (e.key === ';' && this.properties.language === 'ru')) {
@@ -756,7 +748,6 @@ class Keyboard {
                 keyItem.classList.remove('keyboard__key_active');
               }
             });
-            // Событие мышки
             keyItem.addEventListener('click', () => {
               const start = this.elements.textarea.selectionStart;
               if (this.properties.shift) {
@@ -775,7 +766,6 @@ class Keyboard {
           case '5':
             keyItem.classList.add(cssClasses.KEYBOARD_SHIFT_KEY);
             keyItem.textContent = key;
-            // Событие клавиатуры
             this.elements.textarea.addEventListener('keydown', (e) => {
               const start = this.elements.textarea.selectionStart;
               if (e.key === key || e.key === '%') {
@@ -801,7 +791,6 @@ class Keyboard {
                 keyItem.classList.remove('keyboard__key_active');
               }
             });
-            // Событие мышки
             keyItem.addEventListener('click', () => {
               const start = this.elements.textarea.selectionStart;
               if (this.properties.shift) {
@@ -820,7 +809,6 @@ class Keyboard {
           case '6':
             keyItem.classList.add(cssClasses.KEYBOARD_SHIFT_KEY);
             keyItem.textContent = key;
-            // Событие клавиатуры
             this.elements.textarea.addEventListener('keydown', (e) => {
               const start = this.elements.textarea.selectionStart;
               if (e.key === key || e.key === '^' || (e.key === ':' && this.properties.language === 'ru')) {
@@ -846,7 +834,6 @@ class Keyboard {
                 keyItem.classList.remove('keyboard__key_active');
               }
             });
-            // Событие мышки
             keyItem.addEventListener('click', () => {
               const start = this.elements.textarea.selectionStart;
               if (this.properties.shift) {
@@ -865,7 +852,6 @@ class Keyboard {
           case '7':
             keyItem.classList.add(cssClasses.KEYBOARD_SHIFT_KEY);
             keyItem.textContent = key;
-            // Событие клавиатуры
             this.elements.textarea.addEventListener('keydown', (e) => {
               const start = this.elements.textarea.selectionStart;
               if (e.key === key || e.key === '&' || (e.key === '?' && this.properties.language === 'ru')) {
@@ -891,7 +877,6 @@ class Keyboard {
                 keyItem.classList.remove('keyboard__key_active');
               }
             });
-            // Событие мышки
             keyItem.addEventListener('click', () => {
               const start = this.elements.textarea.selectionStart;
               if (this.properties.shift) {
@@ -910,7 +895,6 @@ class Keyboard {
           case '8':
             keyItem.classList.add(cssClasses.KEYBOARD_SHIFT_KEY);
             keyItem.textContent = key;
-            // Событие клавиатуры
             this.elements.textarea.addEventListener('keydown', (e) => {
               const start = this.elements.textarea.selectionStart;
               if (e.key === key || e.key === '*') {
@@ -936,7 +920,6 @@ class Keyboard {
                 keyItem.classList.remove('keyboard__key_active');
               }
             });
-            // Событие мышки
             keyItem.addEventListener('click', () => {
               const start = this.elements.textarea.selectionStart;
               if (this.properties.shift) {
@@ -955,7 +938,6 @@ class Keyboard {
           case '9':
             keyItem.classList.add(cssClasses.KEYBOARD_SHIFT_KEY);
             keyItem.textContent = key;
-            // Событие клавиатуры
             this.elements.textarea.addEventListener('keydown', (e) => {
               const start = this.elements.textarea.selectionStart;
               if (e.key === key || e.key === '(') {
@@ -981,7 +963,6 @@ class Keyboard {
                 keyItem.classList.remove('keyboard__key_active');
               }
             });
-            // Событие мышки
             keyItem.addEventListener('click', () => {
               const start = this.elements.textarea.selectionStart;
               if (this.properties.shift) {
@@ -1000,7 +981,6 @@ class Keyboard {
           case '0':
             keyItem.classList.add(cssClasses.KEYBOARD_SHIFT_KEY);
             keyItem.textContent = key;
-            // Событие клавиатуры
             this.elements.textarea.addEventListener('keydown', (e) => {
               const start = this.elements.textarea.selectionStart;
               if (e.key === key || e.key === ')') {
@@ -1026,7 +1006,6 @@ class Keyboard {
                 keyItem.classList.remove('keyboard__key_active');
               }
             });
-            // Событие мышки
             keyItem.addEventListener('click', () => {
               const start = this.elements.textarea.selectionStart;
               if (this.properties.shift) {
@@ -1045,7 +1024,6 @@ class Keyboard {
           case '-':
             keyItem.classList.add(cssClasses.KEYBOARD_SHIFT_KEY);
             keyItem.textContent = key;
-            // Событие клавиатуры
             this.elements.textarea.addEventListener('keydown', (e) => {
               const start = this.elements.textarea.selectionStart;
               if (e.key === key || e.key === '_') {
@@ -1071,7 +1049,6 @@ class Keyboard {
                 keyItem.classList.remove('keyboard__key_active');
               }
             });
-            // Событие мышки
             keyItem.addEventListener('click', () => {
               const start = this.elements.textarea.selectionStart;
               if (this.properties.shift) {
@@ -1090,7 +1067,6 @@ class Keyboard {
           case '=':
             keyItem.classList.add(cssClasses.KEYBOARD_SHIFT_KEY);
             keyItem.textContent = key;
-            // Событие клавиатуры
             this.elements.textarea.addEventListener('keydown', (e) => {
               const start = this.elements.textarea.selectionStart;
               if (e.key === key || e.key === '+') {
@@ -1116,7 +1092,6 @@ class Keyboard {
                 keyItem.classList.remove('keyboard__key_active');
               }
             });
-            // Событие мышки
             keyItem.addEventListener('click', () => {
               const start = this.elements.textarea.selectionStart;
               if (this.properties.shift) {
@@ -1135,7 +1110,6 @@ class Keyboard {
           case '[':
             keyItem.classList.add(cssClasses.KEYBOARD_SHIFT_KEY);
             keyItem.textContent = key;
-            // Событие клавиатуры
             this.elements.textarea.addEventListener('keydown', (e) => {
               const start = this.elements.textarea.selectionStart;
               if (e.key === key || e.key === '{') {
@@ -1161,7 +1135,6 @@ class Keyboard {
                 keyItem.classList.remove('keyboard__key_active');
               }
             });
-            // Событие мышки
             keyItem.addEventListener('click', () => {
               const start = this.elements.textarea.selectionStart;
               if (this.properties.shift) {
@@ -1180,7 +1153,6 @@ class Keyboard {
           case ']':
             keyItem.classList.add(cssClasses.KEYBOARD_SHIFT_KEY);
             keyItem.textContent = key;
-            // Событие клавиатуры
             this.elements.textarea.addEventListener('keydown', (e) => {
               const start = this.elements.textarea.selectionStart;
               if (e.key === key || e.key === '}') {
@@ -1206,7 +1178,6 @@ class Keyboard {
                 keyItem.classList.remove('keyboard__key_active');
               }
             });
-            // Событие мышки
             keyItem.addEventListener('click', () => {
               const start = this.elements.textarea.selectionStart;
               if (this.properties.shift) {
@@ -1225,7 +1196,6 @@ class Keyboard {
           case '\\':
             keyItem.classList.add(cssClasses.KEYBOARD_SHIFT_KEY);
             keyItem.textContent = key;
-            // Событие клавиатуры
             this.elements.textarea.addEventListener('keydown', (e) => {
               const start = this.elements.textarea.selectionStart;
               if (e.key === key || e.key === '|' || (e.key === '/' && this.properties.language === 'ru')) {
@@ -1251,7 +1221,6 @@ class Keyboard {
                 keyItem.classList.remove('keyboard__key_active');
               }
             });
-            // Событие мышки
             keyItem.addEventListener('click', () => {
               const start = this.elements.textarea.selectionStart;
               if (this.properties.shift) {
@@ -1270,7 +1239,6 @@ class Keyboard {
           case ';':
             keyItem.classList.add(cssClasses.KEYBOARD_SHIFT_KEY);
             keyItem.textContent = key;
-            // Событие клавиатуры
             this.elements.textarea.addEventListener('keydown', (e) => {
               const start = this.elements.textarea.selectionStart;
               if (e.key === key || e.key === ':') {
@@ -1296,7 +1264,6 @@ class Keyboard {
                 keyItem.classList.remove('keyboard__key_active');
               }
             });
-            // Событие мышки
             keyItem.addEventListener('click', () => {
               const start = this.elements.textarea.selectionStart;
               if (this.properties.shift) {
@@ -1315,7 +1282,6 @@ class Keyboard {
           case '\'':
             keyItem.classList.add(cssClasses.KEYBOARD_SHIFT_KEY);
             keyItem.textContent = key;
-            // Событие клавиатуры
             this.elements.textarea.addEventListener('keydown', (e) => {
               const start = this.elements.textarea.selectionStart;
               if (e.key === key || e.key === '"') {
@@ -1341,7 +1307,6 @@ class Keyboard {
                 keyItem.classList.remove('keyboard__key_active');
               }
             });
-            // Событие мышки
             keyItem.addEventListener('click', () => {
               const start = this.elements.textarea.selectionStart;
               if (this.properties.shift) {
@@ -1360,7 +1325,6 @@ class Keyboard {
           case ',':
             keyItem.classList.add(cssClasses.KEYBOARD_SHIFT_KEY);
             keyItem.textContent = key;
-            // Событие клавиатуры
             this.elements.textarea.addEventListener('keydown', (e) => {
               const start = this.elements.textarea.selectionStart;
               if (e.key === key || e.key === '<') {
@@ -1386,7 +1350,6 @@ class Keyboard {
                 keyItem.classList.remove('keyboard__key_active');
               }
             });
-            // Событие мышки
             keyItem.addEventListener('click', () => {
               const start = this.elements.textarea.selectionStart;
               if (this.properties.shift) {
@@ -1405,7 +1368,6 @@ class Keyboard {
           case '.':
             keyItem.classList.add(cssClasses.KEYBOARD_SHIFT_KEY);
             keyItem.textContent = key;
-            // Событие клавиатуры
             this.elements.textarea.addEventListener('keydown', (e) => {
               const start = this.elements.textarea.selectionStart;
               if (e.key === key || e.key === '>' || (e.key === ',' && this.properties.language === 'ru')) {
@@ -1431,7 +1393,6 @@ class Keyboard {
                 keyItem.classList.remove('keyboard__key_active');
               }
             });
-            // Событие мышки
             keyItem.addEventListener('click', () => {
               const start = this.elements.textarea.selectionStart;
               if (this.properties.shift) {
@@ -1450,7 +1411,6 @@ class Keyboard {
           case '/':
             keyItem.classList.add(cssClasses.KEYBOARD_SHIFT_KEY);
             keyItem.textContent = key;
-            // Событие клавиатуры
             this.elements.textarea.addEventListener('keydown', (e) => {
               const start = this.elements.textarea.selectionStart;
               if (e.key === key || e.key === '?') {
@@ -1476,7 +1436,6 @@ class Keyboard {
                 keyItem.classList.remove('keyboard__key_active');
               }
             });
-            // Событие мышки
             keyItem.addEventListener('click', () => {
               const start = this.elements.textarea.selectionStart;
               if (this.properties.shift) {
@@ -1494,7 +1453,6 @@ class Keyboard {
             break;
           default: keyItem.classList.add(cssClasses.KEYBOARD_KEY);
             keyItem.textContent = key.toLowerCase();
-            // Событие клавиатуры
             this.elements.textarea.addEventListener('keydown', (e) => {
               if (e.key === `${(!this.properties.capsLock && this.properties.shift) || (this.properties.capsLock && !this.properties.shift) ? key.toUpperCase() : key.toLowerCase()}`) {
                 e.preventDefault();
@@ -1520,7 +1478,6 @@ class Keyboard {
                 keyItem.classList.remove('keyboard__key_active');
               }
             });
-            // Событие мышки
             keyItem.addEventListener('click', () => {
               const start = this.elements.textarea.selectionStart;
               if (this.properties.capsLock && this.properties.shift) {
@@ -1546,7 +1503,6 @@ class Keyboard {
   }
 
   triggerEvent(handlerName) {
-    console.log('Event Triggered! Event name: ' + handlerName);
     if (typeof this.eventHandlers[handlerName] === 'function') {
       this.eventHandlers[handlerName](this.properties.value);
     }
@@ -1564,7 +1520,6 @@ class Keyboard {
     const keysArr = [];
     childrenArr.forEach((item) => {
       item.forEach((it) => {
-        // console.log(it)
         keysArr.push(it);
       });
     });
@@ -1573,7 +1528,6 @@ class Keyboard {
 
   toggleCapsLock() {
     this.properties.capsLock = !this.properties.capsLock;
-    console.log('Caps toggled', this.properties.capsLock);
     this.putButtonsInArr();
     this.elements.keys.forEach((i) => {
       const item = i;
@@ -1585,7 +1539,6 @@ class Keyboard {
   toggleShift() {
     this.properties.shift = !this.properties.shift;
     this.putButtonsInArr();
-    console.log(this.properties.shift, this.properties.capsLock);
     const withoutShiftEU = ['`', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', '[',
       ']', '\\', ';', '\'', ',', '.', '/'];
     const shiftArrEU = ['~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '{',
@@ -1609,7 +1562,6 @@ class Keyboard {
         item.textContent = withoutShiftRU[index];
       }
 
-
       if (this.properties.shift && !this.properties.capsLock) {
         item.textContent = item.textContent.toUpperCase();
       } else {
@@ -1622,14 +1574,9 @@ class Keyboard {
   }
 
   open(initialValue, oninput) {
-    // this.properties.value = initialValue || '';
     this.eventHandlers.oninput = oninput;
   }
 }
 const testKeyboard = new Keyboard();
-console.log(testKeyboard.elements.keyboard);
 testKeyboard.createElements();
 testKeyboard.elements.textarea.focus();
-// document.onkeypress = function (event) {
-//   console.log(event.key)
-// }
