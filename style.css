@@ -42,11 +42,12 @@ body {
   bottom: -100%;
 }
 
-.keyboard__title {
+.keyboard__description {
   text-align: center;
   color: white;
   font-family: monospace;
-  font-size: 1.5rem;
+  font-size: 2rem;
+  width: 1090px;
 }
 
 .keyboard__wrapper {
@@ -55,7 +56,8 @@ body {
   padding: 5px;
 }
 
-.keyboard__key {
+.keyboard__key,
+.keyboard__shift-key {
   width: 60px;
   height: 40px;
   margin: 3px;
@@ -93,11 +95,14 @@ body {
 
 .keyboard__key_active {
   background: rgba(255, 255, 255, 0.4);
+  scale: 0.95;
 }
 
 .keyboard__key:active,
-.keyboard__special-key:active {
+.keyboard__special-key:active,
+.keyboard__shift-key:active {
   background: rgba(255, 255, 255, 0.4);
+  scale: 0.95;
 }
 
 .keyboard__key_large {
